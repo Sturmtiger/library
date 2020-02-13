@@ -1,0 +1,20 @@
+version: '3'
+services:
+
+  db:
+    image: postgres:11-alpine
+    volumes:
+      - db_data:/var/lib/postgres/data
+
+  library_project:
+    build: .
+    volumes:
+      - .:/library_project/
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    entrypoint: entrypoints/library_project.sh
+
+volumes:
+  db_data:
