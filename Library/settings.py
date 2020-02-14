@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'library_app.apps.LibraryAppConfig',
 ]
 
 MIDDLEWARE = [
@@ -71,15 +72,16 @@ WSGI_APPLICATION = "Library.wsgi.application"
 
 
 # Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+# https://docs.djangoproject.com/en/3.0/ref/settings/#databa"es
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
-        "USER": "postgres",
-        "HOST": "db",
-        "PORT": 5432,
+        "ENGINE": os.environ.get("POSTGRES_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("POSTGRES_NAME",
+                               os.path.join(BASE_DIR, 'db.sqlite3')),
+        "USER": os.environ.get("POSTGRES_USER", ""),
+        "HOST": os.environ.get("POSTGRES_HOST", ""),
+        "PORT": os.environ.get("POSTGRES_PORT", ""),
     }
 }
 
@@ -102,7 +104,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Kiev"
 
 USE_I18N = True
 
