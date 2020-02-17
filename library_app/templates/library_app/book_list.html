@@ -1,0 +1,40 @@
+{% extends 'library_app/base_layout.html' %}
+
+{% block title %}
+Book list - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="col-8 offset-2">
+        <div class="row justify-content-center">
+
+            {% for book in books %}
+            <div class="col-6 mt-4">
+                <div class="card text-center h-100" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ book.title }}</h5>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Year made: {{ book.year_made }}</li>
+                        <li class="list-group-item">
+                            Authors:
+                            {% for author in book.authors.all %}
+                            <a href="{% url 'library_app:author-detail' author.slug %}">{{ author.pseudonym }}</a>
+                            {% endfor %}
+                        </li>
+                        <li class="list-group-item">Genres: {{ book.genres.all|slice:":3"|join:", " }}</li>
+                    </ul>
+                    <div class="card-body">
+                        <a href="{% url 'library_app:book-detail' book.slug %}" class="card-link">Detail info</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>There are no books</p>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

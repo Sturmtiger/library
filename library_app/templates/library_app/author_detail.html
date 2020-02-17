@@ -1,0 +1,54 @@
+{% extends 'library_app/base_layout.html' %}
+
+{% block title %}
+"{{ author.pseudonym }}" detail - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="row">
+        <div class="col-6 offset-3">
+            <div class="d-flex justify-content-center mt-4">
+                <img src="https://m.media-amazon.com/images/M/MV5BNzc1ZTJiNTktY2M2Ny00MGMzLTk4MjUtMWQ1YjJhOTllZGYyXkEyXkFqcGdeQXVyNDUzOTQ5MjY@._V1_.jpg"
+                     class="img-thumbnail" alt="Author photo" style="max-height: 450px">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="text-center my-2">
+                <p class="h1">
+                    {{ author.name }}
+                    {% if author.patronymic %}
+                    {{ author.patronymic }}
+                    {% endif %}
+                    {{ author.surname }}
+                    ({{ author.pseudonym }})
+                </p>
+                <p class="h3">
+                    ({{ author.birthday }}{% if author.deathday %} - {{ author.deathday }} {% endif %})
+                </p>
+
+                <ul class="list-group">
+                    <li class="list-group-item"><b>Genres:</b> {{ author.genres.all|slice:":3"|join:", " }}</li>
+                    <li class="list-group-item"><b>Country:</b> {{ author.country }}</li>
+                    <li class="list-group-item"><b>Biography:</b> {{ author.biography }}</li>
+                    <li class="list-group-item">
+                        <b>Books:</b>
+                        <ul>
+                            {% for book in author.books.all %}
+                             <li style="display: inline;"><a href="{% url 'library_app:book-detail' book.slug %}">{{ book.title }} </a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
