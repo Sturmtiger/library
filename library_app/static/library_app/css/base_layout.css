@@ -4,5 +4,6 @@
     font-family: 'Courgette', cursive;
 }
 body {
-        background: rgba(63,162,178,0.8);
+    background: rgba(63,162,178,0.8);
+    overflow-wrap: break-word;
 }
