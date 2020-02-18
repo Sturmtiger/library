@@ -10,6 +10,11 @@ class BookList(ListView):
     context_object_name = "books"
     template_name = "library_app/book_list.html"
 
+    def get_queryset(self):
+        queryset = self.model.objects.all().prefetch_related(
+            "authors", "genres")
+        return queryset
+
 
 class BookDetail(DetailView):
     model = Book
