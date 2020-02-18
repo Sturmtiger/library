@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'library_app.apps.LibraryAppConfig',
     'debug_toolbar',
+    'star_ratings',
 ]
 
 MIDDLEWARE = [
@@ -123,3 +124,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+
+# Django star ratings
+STAR_RATINGS_RANGE = 10
+STAR_RATINGS_ANONYMOUS = True
+STAR_RATINGS_STAR_WIDTH = 20

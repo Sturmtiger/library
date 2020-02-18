@@ -15,9 +15,13 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 
-urlpatterns = [path("admin/", admin.site.urls), path("", include("library_app.urls"))]
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("", include("library_app.urls")),
+    re_path(r"^ratings/", include("star_ratings.urls", namespace="ratings")),
+]
 
 if settings.DEBUG:
     import debug_toolbar

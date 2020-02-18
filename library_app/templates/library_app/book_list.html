@@ -1,13 +1,18 @@
 {% extends 'library_app/base_layout.html' %}
+{% load static %}
+{% load ratings %}
 
 {% block title %}
 Book list - {{ block.super }}
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+<script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
-
         {% for book in books %}
         <div class="col-4 mt-4">
             <div class="card text-center h-100" style="width: 18rem;">
@@ -27,6 +32,7 @@ Book list - {{ block.super }}
                 <div class="card-body">
                     <a href="{% url 'library_app:book-detail' book.slug %}" class="card-link">Detail info</a>
                 </div>
+                {% ratings book %}
             </div>
         </div>
         {% empty %}

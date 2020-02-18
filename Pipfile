@@ -11,6 +11,7 @@ psycopg2-binary = "*"
 pre-commit = "*"
 pillow = "*"
 django-debug-toolbar = "*"
+django-star-ratings = "*"
 
 [requires]
 python_version = "3.7"
