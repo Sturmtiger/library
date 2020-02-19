@@ -8,8 +8,8 @@ from .utils import join_params_for_pagination
 
 class BookList(ListView):
     filter = None
-    queryset = Book.objects.all().prefetch_related("authors", "genres")
     filterset_class = BookFilter
+    queryset = Book.objects.all().prefetch_related("authors", "genres")
     paginate_by = 2
     context_object_name = "books"
     template_name = "library_app/book_list.html"

@@ -1,5 +1,4 @@
 from time import time
-
 from django.utils.text import slugify
 
 

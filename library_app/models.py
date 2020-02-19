@@ -1,4 +1,5 @@
 from django.db import models
+from .utils import gen_slug
 
 
 class Genre(models.Model):
@@ -34,6 +35,9 @@ class Book(models.Model):
     def save(self, *args, **kwargs):
         self.slug = gen_slug(self.title)
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.title}({self.id})'
 
 
 class Author(models.Model):
