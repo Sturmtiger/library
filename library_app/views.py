@@ -10,9 +10,9 @@ class BookList(ListView):
     filter = None
     filterset_class = BookFilter
     queryset = Book.objects.all().prefetch_related("authors", "genres")
-    paginate_by = 2
+    paginate_by = 9
     context_object_name = "books"
-    template_name = "library_app/book_list.html"
+    template_name = "library_app/book/book_list.html"
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -33,10 +33,10 @@ class BookList(ListView):
 class BookDetail(DetailView):
     model = Book
     context_object_name = "book"
-    template_name = "library_app/book_detail.html"
+    template_name = "library_app/book/book_detail.html"
 
 
 class AuthorDetail(DetailView):
     model = Author
     context_object_name = "author"
-    template_name = "library_app/author_detail.html"
+    template_name = "library_app/author/author_detail.html"

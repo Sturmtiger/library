@@ -4,7 +4,15 @@ from .models import Book
 
 
 class BookFilter(django_filters.FilterSet):
-    title = django_filters.CharFilter(lookup_expr='iexact')
+    title = django_filters.CharFilter(lookup_expr="iexact")
+
+    o = django_filters.OrderingFilter(
+        fields=(
+            ("title", "title"),
+            ("year_made", "year_made"),
+            ("publisher_company", "publisher_company"),
+        )
+    )
 
     class Meta:
         model = Book
