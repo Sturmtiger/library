@@ -12,6 +12,7 @@ pre-commit = "*"
 pillow = "*"
 django-debug-toolbar = "*"
 django-star-ratings = "*"
+django-filter = "*"
 
 [requires]
 python_version = "3.7"

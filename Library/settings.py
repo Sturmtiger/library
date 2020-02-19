@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'library_app.apps.LibraryAppConfig',
     'debug_toolbar',
     'star_ratings',
+    'django_filters',
 ]
 
 MIDDLEWARE = [

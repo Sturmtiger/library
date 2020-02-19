@@ -5,6 +5,8 @@ services:
     image: postgres:11-alpine
     volumes:
       - db_data:/var/lib/postgres/data
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
 
   library_project:
     build: .

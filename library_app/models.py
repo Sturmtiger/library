@@ -1,15 +1,4 @@
-from time import time
-
 from django.db import models
-from django.utils.text import slugify
-
-
-def gen_slug(s):
-    """
-    Takes some model field value and makes a slug based on it.
-    """
-    new_slug = slugify(s, allow_unicode=True)
-    return new_slug + "-" + str(int(time()))
 
 
 class Genre(models.Model):

@@ -1,19 +1,33 @@
 # from django.shortcuts import render
 from django.views.generic import DetailView, ListView
 
+from .model_filters import BookFilter
 from .models import Author, Book
+from .utils import join_params_for_pagination
 
 
 class BookList(ListView):
-    model = Book
-    paginate_by = 9
+    filter = None
+    queryset = Book.objects.all().prefetch_related("authors", "genres")
+    filterset_class = BookFilter
+    paginate_by = 2
     context_object_name = "books"
     template_name = "library_app/book_list.html"
 
     def get_queryset(self):
-        queryset = self.model.objects.all().prefetch_related(
-            "authors", "genres")
-        return queryset
+        queryset = super().get_queryset()
+        self.filter = self.filterset_class(
+            self.request.GET,
+            queryset=queryset
+        )
+        return self.filter.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter'] = self.filter
+        context['page_params'] = join_params_for_pagination(
+            self.request.GET.copy())
+        return context
 
 
 class BookDetail(DetailView):

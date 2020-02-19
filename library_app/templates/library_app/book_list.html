@@ -12,6 +12,34 @@ Book list - {{ block.super }}
 
 {% block content %}
 <div class="container">
+    <div class="row">
+        <div class="col text-center mt-4">
+
+            <p>
+                <button class="btn btn-dark" type="button" data-toggle="collapse" data-target="#collapseFilter"
+                        aria-expanded="false" aria-controls="collapseFilter">
+                    Filter books
+                </button>
+                <a class="btn btn-dark" data-toggle="collapse" href="#collapseSort" role="button"
+                   aria-expanded="false" aria-controls="collapseSort">
+                    Sort books
+                </a>
+            </p>
+
+            <div class="collapse" id="collapseFilter">
+                <form method="get">
+                    {{ filter.form.as_p }}
+                    <input type="submit" value="Filter">
+                </form>
+            </div>
+
+            <div class="collapse" id="collapseSort">
+                Sorting
+            </div>
+
+        </div>
+    </div>
+
     <div class="row justify-content-center">
         {% for book in books %}
         <div class="col-4 mt-4">

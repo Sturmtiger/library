@@ -50,23 +50,23 @@
     <ul class="pagination">
         {% if page_obj.has_previous %}
         <li class="page-item">
-            <a class="page-link" href="?page=1" tabindex="-1">&laquo;</a>
+            <a class="page-link" href="?page=1{{page_params}}" tabindex="-1">&laquo;</a>
         </li>
-        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">Previous</a>
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{{page_params}}" tabindex="-1">Previous</a>
         </li>
         {% endif %}
 
         <li class="page-item active">
-            <a class="page-link" href="?page={{ page_obj.number }}">{{ page_obj.number }}<span
+            <a class="page-link" href="?page={{ page_obj.number }}{{page_params}}">{{ page_obj.number }}<span
                     class="sr-only">(current)</span></a>
         </li>
 
         {% if page_obj.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{{page_params}}">Next</a>
         </li>
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{{page_params}}">&raquo;</a>
         </li>
         {% endif %}
     </ul>
