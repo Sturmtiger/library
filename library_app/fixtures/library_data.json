@@ -91,16 +91,12 @@
     "model": "library_app.book",
     "pk": 1,
     "fields": {
-      "slug": "solaris-1581928474",
+      "slug": "solaris-1582207254",
       "title": "Solaris",
       "cover": "",
       "year_made": 2019,
       "page_count": 234,
       "publisher_company": 2,
-      "authors": [
-        2,
-        3
-      ],
       "genres": [
         5,
         6,
@@ -112,15 +108,12 @@
     "model": "library_app.book",
     "pk": 2,
     "fields": {
-      "slug": "misery-1581928507",
+      "slug": "misery-1582207261",
       "title": "Misery",
       "cover": "",
       "year_made": 1997,
       "page_count": 653,
       "publisher_company": 1,
-      "authors": [
-        1
-      ],
       "genres": [
         2
       ]
@@ -130,17 +123,12 @@
     "model": "library_app.book",
     "pk": 3,
     "fields": {
-      "slug": "some-title-1581946096",
+      "slug": "some-title-1582207290",
       "title": "Some title",
       "cover": "",
       "year_made": 1976,
       "page_count": 754,
       "publisher_company": 4,
-      "authors": [
-        2,
-        3,
-        4
-      ],
       "genres": [
         1,
         2,
@@ -153,16 +141,12 @@
     "model": "library_app.book",
     "pk": 4,
     "fields": {
-      "slug": "some-title-2-1581946121",
+      "slug": "some-title-2-1582207280",
       "title": "Some title 2",
       "cover": "",
       "year_made": 1995,
       "page_count": 423,
       "publisher_company": 2,
-      "authors": [
-        1,
-        2
-      ],
       "genres": [
         4
       ]
@@ -172,16 +156,12 @@
     "model": "library_app.book",
     "pk": 5,
     "fields": {
-      "slug": "azaza-1581946150",
+      "slug": "azaza-1582207298",
       "title": "Azaza",
       "cover": "",
       "year_made": 1985,
       "page_count": 2134,
       "publisher_company": 4,
-      "authors": [
-        1,
-        2
-      ],
       "genres": [
         1,
         2,
@@ -203,9 +183,6 @@
       "year_made": 1999,
       "page_count": 4332,
       "publisher_company": 3,
-      "authors": [
-        3
-      ],
       "genres": [
         2,
         3,
@@ -217,16 +194,12 @@
     "model": "library_app.book",
     "pk": 7,
     "fields": {
-      "slug": "gferww-1581946577",
+      "slug": "gferww-1582207337",
       "title": "Gferww",
       "cover": "",
       "year_made": 1988,
       "page_count": 754,
       "publisher_company": 3,
-      "authors": [
-        3,
-        4
-      ],
       "genres": [
         2,
         4,
@@ -238,16 +211,12 @@
     "model": "library_app.book",
     "pk": 8,
     "fields": {
-      "slug": "many-1581946595",
+      "slug": "many-1582207331",
       "title": "Many",
       "cover": "",
       "year_made": 1999,
       "page_count": 1234,
       "publisher_company": 3,
-      "authors": [
-        1,
-        3
-      ],
       "genres": [
         2,
         3,
@@ -259,17 +228,12 @@
     "model": "library_app.book",
     "pk": 9,
     "fields": {
-      "slug": "qwe-1581946621",
+      "slug": "qwe-1582207325",
       "title": "Qwe",
       "cover": "",
       "year_made": 1999,
       "page_count": 1244,
       "publisher_company": 2,
-      "authors": [
-        1,
-        2,
-        3
-      ],
       "genres": [
         2,
         3,
@@ -282,15 +246,12 @@
     "model": "library_app.book",
     "pk": 10,
     "fields": {
-      "slug": "title-5555-1581946643",
+      "slug": "title-5555-1582207308",
       "title": "Title 5555",
       "cover": "",
       "year_made": 1987,
       "page_count": 165,
       "publisher_company": 3,
-      "authors": [
-        4
-      ],
       "genres": [
         5,
         6,
@@ -302,16 +263,12 @@
     "model": "library_app.book",
     "pk": 11,
     "fields": {
-      "slug": "title-10505555-1581946658",
+      "slug": "title-10505555-1582207248",
       "title": "Title 10505555",
       "cover": "",
       "year_made": 1999,
       "page_count": 133,
       "publisher_company": 1,
-      "authors": [
-        2,
-        3
-      ],
       "genres": [
         3,
         4,
@@ -367,7 +324,7 @@
       "slug": "stanislav-lem-1581934929",
       "name": "Stanislav",
       "surname": "Lem",
-      "patronymic": null,
+      "patronymic": "",
       "pseudonym": "Stanislav Lem",
       "photo": "",
       "birthday": "1934-02-14",
@@ -397,6 +354,195 @@
       "genres": [
         4
       ]
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 1,
+    "fields": {
+      "book": 1,
+      "author": 2,
+      "main": false
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 2,
+    "fields": {
+      "book": 1,
+      "author": 3,
+      "main": true
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 3,
+    "fields": {
+      "book": 2,
+      "author": 1,
+      "main": true
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 4,
+    "fields": {
+      "book": 3,
+      "author": 2,
+      "main": false
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 5,
+    "fields": {
+      "book": 3,
+      "author": 3,
+      "main": false
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 6,
+    "fields": {
+      "book": 3,
+      "author": 4,
+      "main": true
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 7,
+    "fields": {
+      "book": 4,
+      "author": 1,
+      "main": false
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 8,
+    "fields": {
+      "book": 4,
+      "author": 2,
+      "main": true
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 9,
+    "fields": {
+      "book": 5,
+      "author": 1,
+      "main": true
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 10,
+    "fields": {
+      "book": 5,
+      "author": 2,
+      "main": false
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 11,
+    "fields": {
+      "book": 6,
+      "author": 3,
+      "main": false
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 12,
+    "fields": {
+      "book": 7,
+      "author": 3,
+      "main": false
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 13,
+    "fields": {
+      "book": 7,
+      "author": 4,
+      "main": true
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 14,
+    "fields": {
+      "book": 8,
+      "author": 1,
+      "main": false
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 15,
+    "fields": {
+      "book": 8,
+      "author": 3,
+      "main": true
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 16,
+    "fields": {
+      "book": 9,
+      "author": 1,
+      "main": true
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 17,
+    "fields": {
+      "book": 9,
+      "author": 2,
+      "main": false
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 18,
+    "fields": {
+      "book": 9,
+      "author": 3,
+      "main": false
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 19,
+    "fields": {
+      "book": 10,
+      "author": 4,
+      "main": true
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 20,
+    "fields": {
+      "book": 11,
+      "author": 2,
+      "main": false
+    }
+  },
+  {
+    "model": "library_app.bookauthorspriority",
+    "pk": 21,
+    "fields": {
+      "book": 11,
+      "author": 3,
+      "main": true
     }
   }
 ]
