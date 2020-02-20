@@ -7,24 +7,23 @@ from .utils import join_params_for_pagination
 
 
 class BookList(ListView):
-    filter = None
     filterset_class = BookFilter
     queryset = Book.objects.all().prefetch_related("authors", "genres")
     paginate_by = 9
     context_object_name = "books"
-    template_name = "library_app/book/book_list.html"
+    template_name = "library_app/book/list.html"
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        self.filter = self.filterset_class(
+        self.filterset = self.filterset_class(
             self.request.GET,
             queryset=queryset
         )
-        return self.filter.qs
+        return self.filterset.qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter'] = self.filter
+        context['filterset'] = self.filterset
         context['page_params'] = join_params_for_pagination(
             self.request.GET.copy())
         return context
@@ -33,10 +32,10 @@ class BookList(ListView):
 class BookDetail(DetailView):
     model = Book
     context_object_name = "book"
-    template_name = "library_app/book/book_detail.html"
+    template_name = "library_app/book/detail.html"
 
 
 class AuthorDetail(DetailView):
     model = Author
     context_object_name = "author"
-    template_name = "library_app/author/author_detail.html"
+    template_name = "library_app/author/detail.html"

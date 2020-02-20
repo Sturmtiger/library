@@ -29,7 +29,9 @@ class Book(models.Model):
     publisher_company = models.ForeignKey(
         PublisherCompany, related_name="books", on_delete=models.CASCADE
     )
-    authors = models.ManyToManyField("Author", related_name="books")
+    authors = models.ManyToManyField("Author",
+                                     related_name="books",
+                                     through="BookAuthorsPriority")
     genres = models.ManyToManyField("Genre", related_name="books")
 
     def save(self, *args, **kwargs):
@@ -44,7 +46,7 @@ class Author(models.Model):
     slug = models.SlugField(max_length=150, blank=True, unique=True)
     name = models.CharField(max_length=50)
     surname = models.CharField(max_length=50)
-    patronymic = models.CharField(max_length=50, null=True, blank=True)
+    patronymic = models.CharField(max_length=50, blank=True)
     pseudonym = models.CharField(max_length=50, unique=True)
     photo = models.ImageField(null=True, blank=True)
     birthday = models.DateField()
@@ -59,3 +61,9 @@ class Author(models.Model):
 
     def __str__(self):
         return self.pseudonym
+
+
+class BookAuthorsPriority(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    main = models.BooleanField(default=False)

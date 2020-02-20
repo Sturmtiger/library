@@ -17,7 +17,7 @@ services:
     depends_on:
       - db
     env_file:
-      - django_db.env
+      - env/library_project.env
     entrypoint: entrypoints/library_project.sh
 
 volumes:

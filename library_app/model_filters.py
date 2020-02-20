@@ -11,6 +11,7 @@ class BookFilter(django_filters.FilterSet):
             ("title", "title"),
             ("year_made", "year_made"),
             ("publisher_company", "publisher_company"),
+            ("authors", "authors"),
         )
     )
 
