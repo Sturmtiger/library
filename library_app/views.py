@@ -1,6 +1,6 @@
 # from django.shortcuts import render
 from django.views.generic import DetailView, ListView
-
+from django.db.models import FilteredRelation, Q
 from .model_filters import BookFilter
 from .models import Author, Book
 from .utils import join_params_for_pagination
@@ -15,6 +15,14 @@ class BookList(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+
+        if self.request.GET.get('o') in ['author', '-author']:
+            queryset = queryset.annotate(
+                main=FilteredRelation(
+                    'bookauthorspriority',
+                    condition=Q(bookauthorspriority__main=True))
+            )
+
         self.filterset = self.filterset_class(
             self.request.GET,
             queryset=queryset
