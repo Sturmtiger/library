@@ -12,3 +12,6 @@ WORKDIR /library_project
 COPY . .
 
 RUN pipenv install --system
+RUN python manage.py collectstatic --noinput
+
+CMD gunicorn Library.wsgi:application --bind 0.0.0.0:$PORT
