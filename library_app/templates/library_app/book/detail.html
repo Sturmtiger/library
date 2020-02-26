@@ -36,7 +36,7 @@
                         </td>
                         <td>
                             {% for author in book.authors.all %}
-                            <a href="{% url 'library_app:author-detail' author.slug %}">{{ author.pseudonym }}</a>
+                            <a href="{{ author.get_absolute_url }}">{{ author.pseudonym }}</a>
                             {% endfor %}
                         </td>
                     </tr>

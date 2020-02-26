@@ -48,13 +48,13 @@ Book list - {{ block.super }}
                     <li class="list-group-item">
                         Authors:
                         {% for author in book.authors.all %}
-                        <a href="{% url 'library_app:author-detail' author.slug %}">{{ author.pseudonym }}</a>
+                        <a href="{{ author.get_absolute_url }}">{{ author.pseudonym }}</a>
                         {% endfor %}
                     </li>
                     <li class="list-group-item">Genres: {{ book.genres.all|slice:":3"|join:", " }}</li>
                 </ul>
                 <div class="card-body">
-                    <a href="{% url 'library_app:book-detail' book.slug %}" class="card-link">Detail info</a>
+                    <a href="{{ book.get_absolute_url }}" class="card-link">Detail info</a>
                 </div>
                 {% ratings book %}
             </div>

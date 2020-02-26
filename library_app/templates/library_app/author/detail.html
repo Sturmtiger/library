@@ -39,7 +39,7 @@
                         <b>Books:</b>
                         <ul>
                             {% for book in author.books.all %}
-                             <li style="display: inline;"><a href="{% url 'library_app:book-detail' book.slug %}">{{ book.title }} </a></li>
+                             <li style="display: inline;"><a href="{{ book.get_absolute_url }}">{{ book.title }} </a></li>
                             {% endfor %}
                         </ul>
                     </li>

@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.db import models
 from .utils import gen_slug
 
@@ -34,6 +35,9 @@ class Book(models.Model):
                                      through="BookAuthorsPriority")
     genres = models.ManyToManyField("Genre", related_name="books")
 
+    def get_absolute_url(self):
+        return reverse('library_app:book_detail', args=[self.slug])
+
     def save(self, *args, **kwargs):
         self.slug = gen_slug(self.title)
         super().save(*args, **kwargs)
@@ -54,6 +58,9 @@ class Author(models.Model):
     country = models.CharField(max_length=50)
     biography = models.TextField()
     genres = models.ManyToManyField("Genre", related_name="authors")
+
+    def get_absolute_url(self):
+        return reverse('library_app:author_detail', args=[self.slug])
 
     def save(self, *args, **kwargs):
         self.slug = gen_slug(self.pseudonym)
