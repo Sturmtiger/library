@@ -9,7 +9,9 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
 
   library_project:
-    build: .
+    build:
+      context: .
+      dockerfile: local/Dockerfile
     volumes:
       - .:/library_project/
     ports:
