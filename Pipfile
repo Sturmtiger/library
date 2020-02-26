@@ -12,6 +12,10 @@ pre-commit = "*"
 pillow = "*"
 django-debug-toolbar = "*"
 django-star-ratings = "*"
+django-filter = "*"
+whitenoise = "*"
+dj-database-url = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"

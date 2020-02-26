@@ -5,9 +5,13 @@ services:
     image: postgres:11-alpine
     volumes:
       - db_data:/var/lib/postgres/data
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
 
   library_project:
-    build: .
+    build:
+      context: .
+      dockerfile: local/Dockerfile
     volumes:
       - .:/library_project/
     ports:
@@ -15,7 +19,7 @@ services:
     depends_on:
       - db
     env_file:
-      - django_db.env
+      - env/library_project.env
     entrypoint: entrypoints/library_project.sh
 
 volumes:

@@ -1,15 +1,6 @@
-from time import time
-
+from django.urls import reverse
 from django.db import models
-from django.utils.text import slugify
-
-
-def gen_slug(s):
-    """
-    Takes some model field value and makes a slug based on it.
-    """
-    new_slug = slugify(s, allow_unicode=True)
-    return new_slug + "-" + str(int(time()))
+from .utils import gen_slug
 
 
 class Genre(models.Model):
@@ -39,19 +30,27 @@ class Book(models.Model):
     publisher_company = models.ForeignKey(
         PublisherCompany, related_name="books", on_delete=models.CASCADE
     )
-    authors = models.ManyToManyField("Author", related_name="books")
+    authors = models.ManyToManyField("Author",
+                                     related_name="books",
+                                     through="BookAuthorsPriority")
     genres = models.ManyToManyField("Genre", related_name="books")
+
+    def get_absolute_url(self):
+        return reverse('library_app:book_detail', args=[self.slug])
 
     def save(self, *args, **kwargs):
         self.slug = gen_slug(self.title)
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.title}({self.id})'
 
 
 class Author(models.Model):
     slug = models.SlugField(max_length=150, blank=True, unique=True)
     name = models.CharField(max_length=50)
     surname = models.CharField(max_length=50)
-    patronymic = models.CharField(max_length=50, null=True, blank=True)
+    patronymic = models.CharField(max_length=50, blank=True)
     pseudonym = models.CharField(max_length=50, unique=True)
     photo = models.ImageField(null=True, blank=True)
     birthday = models.DateField()
@@ -60,9 +59,18 @@ class Author(models.Model):
     biography = models.TextField()
     genres = models.ManyToManyField("Genre", related_name="authors")
 
+    def get_absolute_url(self):
+        return reverse('library_app:author_detail', args=[self.slug])
+
     def save(self, *args, **kwargs):
         self.slug = gen_slug(self.pseudonym)
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.pseudonym
+
+
+class BookAuthorsPriority(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    main = models.BooleanField(default=False)

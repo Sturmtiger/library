@@ -20,25 +20,14 @@
 </head>
 <body>
 <nav class="navbar navbar-expand navbar-dark bg-dark">
-    <a class="navbar-brand" href="{% url 'library_app:book-list' %}">Library</a>
+    <a class="navbar-brand" href="{% url 'library_app:book_list' %}">Library</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Features</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Pricing</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
-            </li>
+            <!-- navbar items -->
         </ul>
     </div>
 </nav>
@@ -50,23 +39,23 @@
     <ul class="pagination">
         {% if page_obj.has_previous %}
         <li class="page-item">
-            <a class="page-link" href="?page=1" tabindex="-1">&laquo;</a>
+            <a class="page-link" href="?page=1{{page_params}}" tabindex="-1">&laquo;</a>
         </li>
-        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">Previous</a>
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{{page_params}}" tabindex="-1">Previous</a>
         </li>
         {% endif %}
 
         <li class="page-item active">
-            <a class="page-link" href="?page={{ page_obj.number }}">{{ page_obj.number }}<span
+            <a class="page-link" href="?page={{ page_obj.number }}{{page_params}}">{{ page_obj.number }}<span
                     class="sr-only">(current)</span></a>
         </li>
 
         {% if page_obj.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{{page_params}}">Next</a>
         </li>
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{{page_params}}">&raquo;</a>
         </li>
         {% endif %}
     </ul>
