@@ -9,9 +9,12 @@ RUN mkdir /library_project
 
 WORKDIR /library_project
 
+COPY Pipfile Pipfile
+COPY Pipfile.lock Pipfile.lock
+RUN pipenv install --system
+
 COPY . .
 
-RUN pipenv install --system
 RUN python manage.py collectstatic --noinput
 
 CMD gunicorn Library.wsgi:application --bind 0.0.0.0:$PORT

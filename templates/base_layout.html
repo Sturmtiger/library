@@ -15,7 +15,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="{% static 'library_app/css/base_layout.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base_layout.css' %}">
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -26,9 +26,25 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
+
         <ul class="navbar-nav">
             <!-- navbar items -->
         </ul>
+
+        <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users_app:logout' %}">
+                    {{ user.username }} (Log out)
+                </a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users_app:login' %}">Log in</a>
+            </li>
+            {% endif %}
+        </ul>
+
     </div>
 </nav>
 
