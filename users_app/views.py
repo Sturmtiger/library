@@ -1,3 +1,6 @@
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import HttpResponse
+
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import authenticate, login
@@ -30,3 +33,12 @@ class SignUp(View):
 
             return redirect(settings.LOGIN_REDIRECT_URL)
         return render(request, 'users_app/signup.html', {'form': form})
+
+
+class AdminPanel(UserPassesTestMixin, View):
+    def get(self, request):
+        return HttpResponse('Good job')
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_authenticated and user.profile.type == Profile.ADMIN
