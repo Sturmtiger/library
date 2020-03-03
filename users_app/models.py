@@ -13,8 +13,8 @@ class Profile(models.Model):
     )
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    type = models.IntegerField(choices=TYPE_CHOICES)
-    birthday = models.DateField()
+    type = models.IntegerField(choices=TYPE_CHOICES, null=True, blank=True)
+    birthday = models.DateField(null=True, blank=True)
     patronymic = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
