@@ -136,6 +136,8 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # Django star ratings
 STAR_RATINGS_RANGE = 10
 STAR_RATINGS_ANONYMOUS = True

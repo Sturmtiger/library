@@ -34,13 +34,13 @@
         <ul class="navbar-nav ml-auto">
             {% if user.is_authenticated %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'users_app:logout' %}">
+                <a class="nav-link" href="{% url 'logout' %}">
                     {{ user.username }} (Log out)
                 </a>
             </li>
             {% else %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'users_app:login' %}">Log in</a>
+                <a class="nav-link" href="{% url 'login' %}">Log in</a>
             </li>
             {% endif %}
         </ul>

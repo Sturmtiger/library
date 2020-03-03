@@ -1,6 +1,10 @@
 {% extends "base_layout.html" %}
 {% load crispy_forms_tags %}
 
+{% block title %}
+Sign up - {{ block.super }}
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <div class="row mt-4">
@@ -23,7 +27,7 @@
                 {{ form|crispy }}
                 <input type="submit" value="Sign up">
             </form>
-            <legend>Already have an account? <a href="{% url 'users_app:login'%}">Log in</a></legend>
+            <legend>Already have an account? <a href="{% url 'login'%}">Log in</a></legend>
         </div>
     </div>
 </div>

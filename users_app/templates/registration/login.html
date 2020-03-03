@@ -1,0 +1,22 @@
+{% extends "base_layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Log in - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-6 offset-3">
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy}}
+                <input type="submit" value="Login">
+                <a href="{% url 'password_reset' %}">Forgot password?</a>
+            </form>
+            <legend>Don't have an account yet? <a href="{% url 'signup'%}">Sign up</a></legend>
+        </div>
+    </div>
+</div>
+{% endblock %}
