@@ -26,17 +26,27 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-
         <ul class="navbar-nav">
-            <!-- navbar items -->
+            <!-- nav-items -->
         </ul>
 
         <ul class="navbar-nav ml-auto">
             {% if user.is_authenticated %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'logout' %}">
-                    {{ user.username }} (Log out)
-                </a>
+                <div class="dropdown show">
+                    <a class="nav-link btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ user.username }}
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        {% if user.profile.type == 1 %}
+                        <a class="dropdown-item" href="{% url 'admin_panel' %}">Admin-panel</a>
+                        {% endif %}
+                        <a class="dropdown-item" href="#">Profile</a>
+                        <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                    </div>
+                </div>
             </li>
             {% else %}
             <li class="nav-item">
