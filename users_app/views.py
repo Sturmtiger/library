@@ -27,7 +27,6 @@ class SignUpView(View):
     def post(self, request):
         form = SignUpForm(request.POST)
         if form.is_valid():
-            print(request.POST)
             user = form.save()
             user.refresh_from_db()
             user.profile.patronymic = form.cleaned_data.get('patronymic')

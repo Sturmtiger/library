@@ -1,11 +1,12 @@
-from django.views.generic import DetailView, ListView
+from django.contrib import messages
+from django.views.generic import DetailView, ListView, CreateView
 from django.db.models import FilteredRelation, Q
 from .model_filters import BookFilter
 from .models import Author, Book
 from .utils import join_params_for_pagination
 
 
-class BookList(ListView):
+class BookListView(ListView):
     filterset_class = BookFilter
     queryset = Book.objects.all().prefetch_related("authors", "genres")
     paginate_by = 9
@@ -36,13 +37,39 @@ class BookList(ListView):
         return context
 
 
-class BookDetail(DetailView):
+class BookDetailView(DetailView):
     model = Book
     context_object_name = "book"
     template_name = "library_app/book/detail.html"
 
 
-class AuthorDetail(DetailView):
+class AuthorDetailView(DetailView):
     model = Author
     context_object_name = "author"
     template_name = "library_app/author/detail.html"
+
+
+class CreateBookView(CreateView):
+    model = Book
+    fields = ('title', 'cover', 'year_made', 'page_count', 'authors',
+              'genres',)
+    template_name = 'library_app/book/create.html'
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['next'] = self.request.GET.get('next', '/')
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        publisher_company = self.request.user.profile.publisher_company
+        # Create the book with the company the user-publisher belongs to
+        self.object.publisher_company = publisher_company
+        self.object.save()
+        messages.success(self.request, f'Book "{self.object.title}" '
+                                       f'has been created.')
+
+        return super().form_valid(form)

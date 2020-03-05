@@ -8,11 +8,11 @@ Your profile - {{ block.super }}
 <div class="container">
     <div class="row mt-4">
         <div class="col">
-            <h2 class="d-flex justify-content-center">Your profile</h2>
+            <h1 class="d-flex justify-content-center">Your profile</h1>
         </div>
     </div>
     <div class="row mt-4">
-        <div class="col">
+        <div class="col-6 offset-3">
 
             {% if messages %}
             {% for message in messages %}
@@ -22,7 +22,7 @@ Your profile - {{ block.super }}
             {% endfor %}
             {% endif %}
 
-            <div class="card" style="width: 18rem;">
+            <div class="card text-center">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                         <a href="{% url 'update_user' %}?next={{ request.path }}">Update your data</a>
@@ -30,6 +30,11 @@ Your profile - {{ block.super }}
                     <li class="list-group-item">
                         <a href="{% url 'password_change' %}?next={{ request.path }}">Change password</a>
                     </li>
+                    {% if user.profile.type == 2 and user.profile.publisher_company %}
+                    <li class="list-group-item">
+                        <a href="{% url 'library_app:create_book' %}?next={{ request.path }}">Add new book</a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
 
