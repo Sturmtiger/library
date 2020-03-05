@@ -3,7 +3,9 @@ from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
-    path('admin_panel', views.AdminPanelView.as_view(), name='admin_panel'),
+    path('admin_panel/', views.AdminPanelView.as_view(), name='admin_panel'),
+    path('profile/', views.UserProfileView.as_view(), name='profile'),
+    path('update_user/', views.UpdateUserView.as_view(), name='update_user'),
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('signup/', views.SignUpView.as_view(), name='signup'),

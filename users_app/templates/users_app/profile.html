@@ -1,0 +1,39 @@
+{% extends "base_layout.html" %}
+
+{% block title %}
+Your profile - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mt-4">
+        <div class="col">
+            <h2 class="d-flex justify-content-center">Your profile</h2>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col">
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <div class="card" style="width: 18rem;">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a href="{% url 'update_user' %}?next={{ request.path }}">Update your data</a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="{% url 'password_change' %}?next={{ request.path }}">Change password</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
