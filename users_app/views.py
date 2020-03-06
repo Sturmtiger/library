@@ -1,4 +1,6 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import LoginView, PasswordResetView
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
@@ -15,10 +17,10 @@ from .forms import (SignUpForm, CreatePublisherUserForm,
                     UpdateUserForm, UpdateProfileForm,
                     AssignPublisherCompanyToUserPublisherForm)
 from .models import Profile
-from .custom_mixins import UserIsAdminMixin
+from .custom_mixins import UserIsAdminMixin, UserIsNotLoggedIn
 
 
-class SignUpView(View):
+class SignUpView(UserIsNotLoggedIn, View):
     def get(self, request):
         form = SignUpForm()
         return render(request, 'users_app/signup.html', {'form': form})
@@ -75,7 +77,7 @@ class AdminPanelView(UserIsAdminMixin, View):
                     'user': user,
                     'token': default_token_generator.make_token(user),
                     'protocol': 'https' if self.request.is_secure()
-                                else 'http',
+                    else 'http',
                 }
 
                 subject = render_to_string(
@@ -112,9 +114,16 @@ class AdminPanelView(UserIsAdminMixin, View):
         return render(request, 'users_app/admin_panel.html', context=context)
 
 
-class UserProfileView(View):
+class UserProfileView(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, 'users_app/profile.html')
+        books = None
+
+        user = request.user
+        if (user.profile.type == Profile.PUBLISHER and
+                user.profile.publisher_company):
+            books = user.profile.publisher_company.books.all()
+
+        return render(request, 'users_app/profile.html', {'books': books})
 
 
 class UpdateUserView(View):
@@ -146,3 +155,12 @@ class UpdateUserView(View):
             'profile_form': profile_form,
             'next': next_url,
         })
+
+
+class CustomLoginView(UserIsNotLoggedIn, LoginView):
+    pass
+
+
+class CustomPasswordResetView(UserIsNotLoggedIn, PasswordResetView):
+    template_name = 'users_app/password_reset/form.html'
+    subject_template_name = 'users_app/password_reset/subject.txt'

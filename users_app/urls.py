@@ -6,7 +6,7 @@ urlpatterns = [
     path('admin_panel/', views.AdminPanelView.as_view(), name='admin_panel'),
     path('profile/', views.UserProfileView.as_view(), name='profile'),
     path('update_user/', views.UpdateUserView.as_view(), name='update_user'),
-    path('login/', auth_views.LoginView.as_view(), name='login'),
+    path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('signup/', views.SignUpView.as_view(), name='signup'),
 
@@ -22,11 +22,7 @@ urlpatterns = [
          name='password_change_done'),
 
     path('password_reset/',
-         auth_views.PasswordResetView.as_view(
-             template_name='users_app/password_reset/form.html',
-             subject_template_name='users_app/password_reset/subject.txt',
-         ),
-         name='password_reset'),
+         views.CustomPasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/',
          auth_views.PasswordResetDoneView.as_view(
              template_name='users_app/password_reset/done.html',

@@ -1,6 +1,13 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
+from django.views import View
 from django.views.generic import DetailView, ListView, CreateView
+from django.shortcuts import get_object_or_404, redirect
 from django.db.models import FilteredRelation, Q
+
+from users_app.custom_mixins import UserIsPublisherAndHaveCompanyMixin
+from users_app.models import Profile
 from .model_filters import BookFilter
 from .models import Author, Book
 from .utils import join_params_for_pagination
@@ -49,7 +56,7 @@ class AuthorDetailView(DetailView):
     template_name = "library_app/author/detail.html"
 
 
-class CreateBookView(CreateView):
+class CreateBookView(UserIsPublisherAndHaveCompanyMixin, CreateView):
     model = Book
     fields = ('title', 'cover', 'year_made', 'page_count', 'authors',
               'genres',)
@@ -73,3 +80,14 @@ class CreateBookView(CreateView):
                                        f'has been created.')
 
         return super().form_valid(form)
+
+
+class DeleteBookView(UserIsPublisherAndHaveCompanyMixin, View):
+    def get(self, request, slug):
+        book = get_object_or_404(Book, slug=slug)
+        if request.user.profile.publisher_company == book.publisher_company:
+            # book.delete()
+            messages.success(request, 'Book has been deleted successfully')
+            next_url = request.GET.get('next', '/')
+            return redirect(next_url)
+        raise PermissionDenied
