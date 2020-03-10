@@ -19,7 +19,9 @@ class Profile(models.Model):
                                           on_delete=models.SET_NULL)
     user = models.OneToOneField(User, on_delete=models.CASCADE,
                                 related_name='profile')
-    type = models.IntegerField(choices=TYPE_CHOICES, null=True, blank=True)
+    # By default, a reader type is created
+    # to avoid the issue of not having a user type.
+    type = models.IntegerField(choices=TYPE_CHOICES, default=READER)
     birthday = models.DateField(null=True, blank=True)
     patronymic = models.CharField(max_length=50, blank=True)
 

@@ -77,13 +77,14 @@ class AdminPanelView(UserIsAdminMixin, View):
                     "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                     "user": user,
                     "token": default_token_generator.make_token(user),
-                    "protocol": "https" if self.request.is_secure() else "http",
+                    "protocol": "https" if self.request.is_secure()
+                                else "http",
                 }
 
-                subject = render_to_string("users_app/password_set/subject.txt")
+                subject = render_to_string(
+                    "users_app/password_set/subject.txt")
                 message = render_to_string(
-                    "users_app/password_set/email.html", context=mail_context
-                )
+                    "users_app/password_set/email.html", context=mail_context)
 
                 send_mail(
                     subject=subject,
@@ -93,7 +94,8 @@ class AdminPanelView(UserIsAdminMixin, View):
                 )
                 messages.success(
                     request,
-                    "Publisher-user has been created " "and message has been sent.",
+                    "Publisher-user has been created " 
+                    "and message has been sent.",
                 )
 
         if "assign_company" in request.POST:
@@ -122,7 +124,8 @@ class UserProfileView(LoginRequiredMixin, View):
         books = None
 
         user = request.user
-        if user.profile.type == Profile.PUBLISHER and user.profile.publisher_company:
+        if (user.profile.type == Profile.PUBLISHER
+                and user.profile.publisher_company):
             books = user.profile.publisher_company.books.all()
 
         return render(request, "users_app/profile.html", {"books": books})
@@ -133,28 +136,36 @@ class UpdateUserView(View):
         user_form = UpdateUserForm(instance=request.user)
         profile_form = UpdateProfileForm(instance=request.user.profile)
         next_url = self.request.GET.get("next", "/")
+
+        context = {
+            "user_form": user_form,
+            "profile_form": profile_form,
+            "next": next_url,
+        }
         return render(
-            request,
-            "users_app/update_user.html",
-            {"user_form": user_form, "profile_form": profile_form, "next": next_url},
-        )
+            request, "users_app/update_user.html", context=context)
 
     @transaction.atomic
     def post(self, request):
         user_form = UpdateUserForm(request.POST, instance=request.user)
-        profile_form = UpdateProfileForm(request.POST, instance=request.user.profile)
+        profile_form = UpdateProfileForm(request.POST,
+                                         instance=request.user.profile)
         next_url = self.request.GET.get("next", "/")
 
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            messages.success(request, "Your data has been updated successfully!")
+            messages.success(request,
+                             "Your data has been updated successfully!")
             return redirect(next_url)
+
+        context = {
+          "user_form": user_form,
+          "profile_form": profile_form,
+          "next": next_url
+        }
         return render(
-            request,
-            "users_app/update_user.html",
-            {"user_form": user_form, "profile_form": profile_form, "next": next_url},
-        )
+            request, "users_app/update_user.html", context=context)
 
 
 class CustomLoginView(UserIsNotLoggedIn, LoginView):

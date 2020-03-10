@@ -3,6 +3,7 @@
 You received this email address because you were invited as a publisher at {{ site_name }}
 
 Please go to the following page and set your password:
+Domain {{ domain }}
 {{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
 Your username, at this time: {{ user.get_username }}, you can change one in your profile.
 

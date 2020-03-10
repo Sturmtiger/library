@@ -43,6 +43,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'django.contrib.sites',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.linkedin_oauth2',
+
     'debug_toolbar',
     'star_ratings',
     'django_filters',
@@ -140,15 +148,26 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Django star ratings
 STAR_RATINGS_RANGE = 10
-STAR_RATINGS_ANONYMOUS = True
 STAR_RATINGS_STAR_WIDTH = 20
+STAR_RATINGS_ANONYMOUS = False
+STAR_RATINGS_RERATE = False
 
 # Whitenoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # URLs
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/users/login/'
 
 # Crispy forms
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+SITE_ID = 1
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False

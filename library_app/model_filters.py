@@ -11,6 +11,7 @@ class BookFilter(django_filters.FilterSet):
             ("year_made", "year_made"),
             ("publisher_company", "publisher_company"),
             ("main__author__pseudonym", "author"),
+            ("ratings__average", "ratings"),
         )
     )
 
