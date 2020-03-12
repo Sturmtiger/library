@@ -45,18 +45,20 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'django.contrib.sites',
 
+    'mptt',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.linkedin_oauth2',
-
     'debug_toolbar',
     'star_ratings',
     'django_filters',
     'crispy_forms',
+
     'library_app.apps.LibraryAppConfig',
-    'users_app.apps.UsersAppConfig'
+    'users_app.apps.UsersAppConfig',
+    'comments_app.apps.CommentsAppConfig',
 
 ]
 

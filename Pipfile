@@ -18,6 +18,7 @@ dj-database-url = "*"
 gunicorn = "*"
 django-crispy-forms = "*"
 django-allauth = "*"
+django-mptt = "*"
 
 [requires]
 python_version = "3.7"

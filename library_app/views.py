@@ -1,15 +1,20 @@
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db.models import FilteredRelation, Q
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DetailView, ListView
+from django.views.generic.edit import FormMixin
 
+from comments_app.models import Comment
 from users_app.custom_mixins import UserIsPublisherAndHaveCompanyMixin
 
 from .model_filters import BookFilter
 from .models import Author, Book
 from .utils import join_params_for_pagination
+from comments_app.forms import CommentForm
 
 
 class BookListView(ListView):
@@ -43,10 +48,44 @@ class BookListView(ListView):
         return context
 
 
-class BookDetailView(DetailView):
+class BookDetailView(FormMixin, DetailView):
     model = Book
+    form_class = CommentForm
+
     context_object_name = "book"
     template_name = "library_app/book/detail.html"
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            raise PermissionDenied
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = self.object.comments.all()
+        return context
+
+    def form_valid(self, form):
+        parent = None
+        parent_id = self.request.POST.get('parent')
+        if parent_id:
+            parent = get_object_or_404(Comment, id=parent_id)
+
+        comment = form.save(commit=False)
+        comment.content_object = self.object
+        comment.user = self.request.user
+        comment.parent = parent
+        comment.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('library_app:book_detail',
+                            kwargs={'slug': self.object.slug})
 
 
 class AuthorDetailView(DetailView):
