@@ -4,8 +4,9 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
-from .models import Profile
 from library_app.models import PublisherCompany
+
+from .models import Profile
 from .utils import gen_username_from_email
 
 

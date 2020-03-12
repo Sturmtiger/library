@@ -1,10 +1,11 @@
-from django.urls import reverse
-from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
-
+from django.db import models
+from django.urls import reverse
 from star_ratings.models import Rating
-from .utils import gen_slug
+
 from comments_app.models import Comment
+
+from .utils import gen_slug
 
 
 class Genre(models.Model):

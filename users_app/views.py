@@ -94,7 +94,7 @@ class AdminPanelView(UserIsAdminMixin, View):
                 )
                 messages.success(
                     request,
-                    "Publisher-user has been created " 
+                    "Publisher-user has been created "
                     "and message has been sent.",
                 )
 

@@ -1,20 +1,20 @@
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db.models import FilteredRelation, Q
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DetailView, ListView
 from django.views.generic.edit import FormMixin
 
+from comments_app.forms import CommentForm
 from comments_app.models import Comment
 from users_app.custom_mixins import UserIsPublisherAndHaveCompanyMixin
 
 from .model_filters import BookFilter
 from .models import Author, Book
 from .utils import join_params_for_pagination
-from comments_app.forms import CommentForm
 
 
 class BookListView(ListView):
@@ -57,7 +57,8 @@ class BookDetailView(FormMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            raise PermissionDenied
+            next_url_param = '?next=%s' % request.path
+            return HttpResponseRedirect(reverse('login')+next_url_param)
         self.object = self.get_object()
         form = self.get_form()
         if form.is_valid():

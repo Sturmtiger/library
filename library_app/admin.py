@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Author, Book, Genre, PublisherCompany, BookAuthorsPriority
+
+from .models import Author, Book, BookAuthorsPriority, Genre, PublisherCompany
 
 
 class BookAuthorsPriorityInline(admin.TabularInline):

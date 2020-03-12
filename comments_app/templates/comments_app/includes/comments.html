@@ -27,7 +27,7 @@
           <p>{{ node.text }}</p>
           <div class="dropdown show">
             <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">reply</a>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <div class="dropdown-menu px-2" aria-labelledby="dropdownMenuLink">
               <form method="post">
                 {% csrf_token %}
                 {{ form }}
