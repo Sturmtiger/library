@@ -3,6 +3,7 @@ services:
 
   db:
     image: postgres:11-alpine
+    restart: always
     volumes:
       - db_data:/var/lib/postgres/data
     environment:
@@ -21,6 +22,13 @@ services:
     env_file:
       - env/library_project.env
     entrypoint: entrypoints/library_project.sh
+
+  mailhog:
+    image: mailhog/mailhog
+    restart: always
+    ports:
+      - 1025:1025 # smtp server
+      - 8025:8025 # web ui
 
 volumes:
   db_data:
