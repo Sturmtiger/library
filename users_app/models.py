@@ -16,7 +16,9 @@ class Profile(models.Model):
 
     # This field is used only for user-publisher, it is NULL to defaults.
     # You can set a publisher-company for a user-publisher from the admin-panel
-    publisher_company = models.ForeignKey(PublisherCompany, null=True,
+    publisher_company = models.ForeignKey(PublisherCompany,
+                                          null=True,
+                                          blank=True,
                                           on_delete=models.SET_NULL)
     user = models.OneToOneField(User, on_delete=models.CASCADE,
                                 related_name='profile')
@@ -25,6 +27,7 @@ class Profile(models.Model):
     type = models.IntegerField(choices=TYPE_CHOICES, default=READER)
     birthday = models.DateField(null=True, blank=True)
     patronymic = models.CharField(max_length=50, blank=True)
+    get_newsletter = models.BooleanField(blank=True, default=False)
 
     def __str__(self):
         return f'{self.user.username}({self.user.id})'

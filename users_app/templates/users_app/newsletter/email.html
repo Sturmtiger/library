@@ -1,0 +1,11 @@
+{% autoescape off %}
+
+Hello dear user.
+This is a weekly newsletter.
+
+Here are the latest books for the week:
+{% for book in new_books %}
+{{ protocol }}://{{ domain }}{{ book.get_absolute_url }}
+{% endfor %}
+
+{% endautoescape %}

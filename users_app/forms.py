@@ -20,11 +20,30 @@ class SignUpForm(UserCreationForm):
     birthday = forms.DateField(help_text='Format: YYYY-MM-DD',
                                required=False)
     patronymic = forms.CharField(max_length=50, required=False)
+    get_newsletter = forms.BooleanField(required=False,
+                                        label='I want to get newsletter')
 
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'patronymic',
-                  'email', 'birthday', 'password1', 'password2',)
+                  'email', 'birthday', 'password1', 'password2',
+                  'get_newsletter')
+
+
+class UpdateUserForm(forms.ModelForm):
+    class Meta:
+        fields = ('username', 'last_name', 'first_name',)
+        model = User
+
+
+class UpdateProfileForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['get_newsletter'].label = 'I want to get newsletter'
+
+    class Meta:
+        fields = ('patronymic', 'birthday', 'get_newsletter')
+        model = Profile
 
 
 class CreatePublisherUserForm(forms.ModelForm):
@@ -56,21 +75,6 @@ class CreatePublisherUserForm(forms.ModelForm):
         if User.objects.filter(email=email).exists():
             raise ValidationError('This email already exists')
         return email
-
-
-class UpdateUserForm(forms.ModelForm):
-    class Meta:
-        fields = ('username', 'last_name', 'first_name',)
-        model = User
-
-
-class UpdateProfileForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    class Meta:
-        fields = ('patronymic', 'birthday',)
-        model = Profile
 
 
 class AssignPublisherCompanyToUserPublisherForm(forms.Form):

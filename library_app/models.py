@@ -29,6 +29,7 @@ class PublisherCompany(models.Model):
 class Book(models.Model):
     slug = models.SlugField(max_length=150, blank=True, unique=True)
     title = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
     cover = models.ImageField(null=True, blank=True)
     year_made = models.PositiveSmallIntegerField()
     page_count = models.PositiveSmallIntegerField()

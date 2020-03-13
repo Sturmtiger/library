@@ -20,6 +20,7 @@ django-crispy-forms = "*"
 django-allauth = "*"
 django-mptt = "*"
 celery = "*"
+redis = "*"
 
 [requires]
 python_version = "3.7"

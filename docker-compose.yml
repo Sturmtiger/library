@@ -9,19 +9,10 @@ services:
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
 
-  library_project:
-    build:
-      context: .
-      dockerfile: local/Dockerfile
-    volumes:
-      - .:/library_project/
+  redis:
+    image: redis
     ports:
-      - "8080:8080"
-    depends_on:
-      - db
-    env_file:
-      - env/library_project.env
-    entrypoint: entrypoints/library_project.sh
+      - 6379:6379
 
   mailhog:
     image: mailhog/mailhog
@@ -29,6 +20,36 @@ services:
     ports:
       - 1025:1025 # smtp server
       - 8025:8025 # web ui
+
+  library_project:
+    build:
+      context: .
+      dockerfile: local/Dockerfile
+    volumes:
+      - .:/library_project/
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+      - redis
+      - mailhog
+    env_file:
+      - env/library_project.env
+    entrypoint: entrypoints/library_project.sh
+
+  celery:
+    build:
+      context: .
+      dockerfile: local/Dockerfile
+    volumes:
+      - .:/library_project/
+    depends_on:
+      - db
+      - redis
+      - mailhog
+    env_file:
+      - env/library_project.env
+    entrypoint: entrypoints/library_project_celery.sh
 
 volumes:
   db_data:
