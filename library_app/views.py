@@ -13,7 +13,7 @@ from comments_app.models import Comment
 from users_app.custom_mixins import UserIsPublisherAndHaveCompanyMixin
 
 from .model_filters import BookFilter
-from .models import Author, Book
+from .models import Author, Book, BookAuthorsPriority
 from .utils import join_params_for_pagination
 
 
@@ -31,7 +31,7 @@ class BookListView(ListView):
             queryset = queryset.annotate(
                 main=FilteredRelation(
                     'bookauthorspriority',
-                    condition=Q(bookauthorspriority__main=True))
+                    condition=Q(bookauthorspriority__priority=1))
             )
 
         self.filterset = self.filterset_class(
@@ -101,6 +101,11 @@ class CreateBookView(UserIsPublisherAndHaveCompanyMixin, CreateView):
               'genres',)
     template_name = 'library_app/book/create.html'
 
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(**self.get_form_kwargs())
+
     def get_success_url(self):
         return self.request.GET.get('next', '/')
 
@@ -110,14 +115,18 @@ class CreateBookView(UserIsPublisherAndHaveCompanyMixin, CreateView):
         return context
 
     def form_valid(self, form):
+        print(form.cleaned_data['authors'])
         self.object = form.save(commit=False)
         publisher_company = self.request.user.profile.publisher_company
         # Create the book with the company the user-publisher belongs to
         self.object.publisher_company = publisher_company
         self.object.save()
+
+        for author in form.cleaned_data.get('authors'):
+            BookAuthorsPriority.objects.create(book=self.object, author=author)
+
         messages.success(self.request, f'Book "{self.object.title}" '
                                        f'has been created.')
-
         return super().form_valid(form)
 
 

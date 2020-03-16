@@ -34,8 +34,7 @@ class Book(models.Model):
     year_made = models.PositiveSmallIntegerField()
     page_count = models.PositiveSmallIntegerField()
     publisher_company = models.ForeignKey(
-        PublisherCompany, related_name="books", on_delete=models.CASCADE
-    )
+        PublisherCompany, related_name="books", on_delete=models.CASCADE)
     authors = models.ManyToManyField("Author",
                                      related_name="books",
                                      through="BookAuthorsPriority")
@@ -47,6 +46,7 @@ class Book(models.Model):
         return reverse('library_app:book_detail', args=[self.slug])
 
     def save(self, *args, **kwargs):
+        print('BOOK SAVE')
         self.slug = gen_slug(self.title)
         super().save(*args, **kwargs)
 
@@ -81,4 +81,15 @@ class Author(models.Model):
 class BookAuthorsPriority(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    main = models.BooleanField(default=False)
+    priority = models.PositiveSmallIntegerField(default=1)
+
+    def save(self, *args, **kwargs):
+        print('PRIORITY SAVE')
+        prev_same_book = BookAuthorsPriority.objects.filter(
+            book=self.book).last()
+        if prev_same_book:
+            self.priority = prev_same_book.priority + 1
+        super().save(*args, **kwargs)
+
+    class Meta:
+        unique_together = ('book', 'priority')
