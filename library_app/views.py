@@ -7,6 +7,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DetailView, ListView
 from django.views.generic.edit import FormMixin
+from django.views.decorators.cache import cache_page
 
 from comments_app.forms import CommentForm
 from comments_app.models import Comment
@@ -48,6 +49,7 @@ class BookListView(ListView):
         return context
 
 
+@cache_page()
 class BookDetailView(FormMixin, DetailView):
     model = Book
     form_class = CommentForm
