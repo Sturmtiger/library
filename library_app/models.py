@@ -19,34 +19,35 @@ class PublisherCompany(models.Model):
     name = models.CharField(max_length=50, unique=True)
     country = models.CharField(max_length=50)
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name_plural = "Publisher companies"
+
+    def __str__(self):
+        return self.name
 
 
 class Book(models.Model):
     slug = models.SlugField(max_length=150, blank=True, unique=True)
     title = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
     cover = models.ImageField(null=True, blank=True)
     year_made = models.PositiveSmallIntegerField()
     page_count = models.PositiveSmallIntegerField()
     publisher_company = models.ForeignKey(
-        PublisherCompany, related_name="books", on_delete=models.CASCADE
-    )
+        PublisherCompany, related_name="books", on_delete=models.CASCADE)
     authors = models.ManyToManyField("Author",
                                      related_name="books",
                                      through="BookAuthorsPriority")
     genres = models.ManyToManyField("Genre", related_name="books")
     ratings = GenericRelation(Rating, related_query_name='books')
-    comments = GenericRelation(Comment, related_query_name='books')
+    comments = GenericRelation(Comment, related_query_name='book')
 
     def get_absolute_url(self):
         return reverse('library_app:book_detail', args=[self.slug])
 
     def save(self, *args, **kwargs):
-        self.slug = gen_slug(self.title)
+        if not self.slug:
+            self.slug = gen_slug(self.title)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -80,4 +81,14 @@ class Author(models.Model):
 class BookAuthorsPriority(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    main = models.BooleanField(default=False)
+    priority = models.PositiveSmallIntegerField(default=1)
+
+    def save(self, *args, **kwargs):
+        prev_same_book = BookAuthorsPriority.objects.filter(
+            book=self.book).last()
+        if prev_same_book:
+            self.priority = prev_same_book.priority + 1
+        super().save(*args, **kwargs)
+
+    class Meta:
+        unique_together = ('book', 'priority')

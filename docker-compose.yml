@@ -3,10 +3,31 @@ services:
 
   db:
     image: postgres:11-alpine
+    restart: always
     volumes:
       - db_data:/var/lib/postgres/data
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+
+  mailhog:
+    image: mailhog/mailhog
+    restart: always
+    ports:
+      - 1025:1025 # smtp server
+      - 8025:8025 # web ui
+
+  memcached:
+    image: memcached
+    ports:
+      - 11211:11211
+    entrypoint:
+      - memcached
+      - -m 64
 
   library_project:
     build:
@@ -15,12 +36,29 @@ services:
     volumes:
       - .:/library_project/
     ports:
-      - "8080:8080"
+      - 8080:8080
     depends_on:
       - db
+      - memcached
+      - redis
+      - mailhog
     env_file:
       - env/library_project.env
     entrypoint: entrypoints/library_project.sh
+
+  celery:
+    build:
+      context: .
+      dockerfile: local/Dockerfile
+    volumes:
+      - .:/library_project/
+    depends_on:
+      - db
+      - redis
+      - mailhog
+    env_file:
+      - env/library_project.env
+    entrypoint: entrypoints/library_project_celery.sh
 
 volumes:
   db_data:

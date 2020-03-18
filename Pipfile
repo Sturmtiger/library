@@ -19,6 +19,9 @@ gunicorn = "*"
 django-crispy-forms = "*"
 django-allauth = "*"
 django-mptt = "*"
+celery = "*"
+redis = "*"
+python-memcached = "*"
 
 [requires]
 python_version = "3.7"

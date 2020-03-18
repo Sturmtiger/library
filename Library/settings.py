@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import dj_database_url
+from celery.schedules import crontab
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY',
-                default='gu9xk2cph!ympu$v3kt=upzo0621&j^4$np5$c9fujv)e80n-c')
+                            default='gu9xk2cph!ympu$v3kt=upzo0621&j^4$np5$c9fujv)e80n-c')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get('DEBUG', default=1))
@@ -30,9 +31,14 @@ DEBUG = int(os.environ.get('DEBUG', default=1))
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.herokuapp.com']
 
 INTERNAL_IPS = [
-     '127.0.0.1',
- ]
+    '127.0.0.1',
+]
 
+import socket
+
+# tricks to have debug toolbar when developing with docker
+ip = socket.gethostbyname(socket.gethostname())
+INTERNAL_IPS += [ip[:-1] + '1']
 
 # Application definition
 
@@ -66,7 +72,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
+    'django.middleware.common.CommonMiddleware',
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -98,17 +104,39 @@ WSGI_APPLICATION = "Library.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databa"es
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if os.environ.get('POSTGRES_CONFIG'):
+    DATABASES = {
+        'default': {
+            'ENGINE': os.environ.get('POSTGRES_ENGINE'),
+            'NAME': os.environ.get('POSTGRES_DB'),
+            'USER': os.environ.get('POSTGRES_USER'),
+            'HOST': os.environ.get('POSTGRES_HOST'),
+            'PORT': os.environ.get('POSTGRES_PORT'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+
 
 DATABASE_URL = os.environ.get('DATABASE_URL')
-db_from_env = dj_database_url.config(default=DATABASE_URL, conn_max_age=500, ssl_require=True)
-DATABASES['default'].update(db_from_env)
+if DATABASE_URL:
+    db_from_env = dj_database_url.config(
+        default=DATABASE_URL, conn_max_age=500, ssl_require=True)
+    DATABASES['default'].update(db_from_env)
 
+# Caches
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': os.environ.get('MEMCACHED_LOCATION', '0.0.0.0:11211'),
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -146,7 +174,12 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# email
+EMAIL_HOST = os.environ.get('EMAIL_HOST', '0.0.0.0')
+EMAIL_PORT = 1025
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
 
 # Django star ratings
 STAR_RATINGS_RANGE = 10
@@ -169,7 +202,31 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-SITE_ID = 1
+SITE_ID = 3
 
+# django-allauth
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_USERNAME_REQUIRED = False
+
+# celery
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL',
+                                   'redis://redis:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND',
+                                       'redis://redis:6379/1')
+CELERY_TIMEZONE = 'Europe/Kiev'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TASK_ROUTES = {
+    'users_app.celery_tasks.send_mail_async': {'queue': 'send_mail'},
+    'users_app.celery_tasks.newsletter': {'queue': 'newsletter'},
+}
+CELERY_BEAT_SCHEDULE = {
+    'newsletter': {
+        'task': 'users_app.celery_tasks.newsletter',
+        # every Friday at 12:00
+        'schedule': crontab(minute=0, hour=12, day_of_week='5'),
+    }
+}

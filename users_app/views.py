@@ -6,8 +6,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import (LoginView, PasswordResetConfirmView,
                                        PasswordResetView)
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import send_mail
 from django.db import transaction
+from django.http import Http404
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
@@ -19,6 +19,7 @@ from .forms import (AssignPublisherCompanyToUserPublisherForm,
                     CreatePublisherUserForm, SignUpForm, UpdateProfileForm,
                     UpdateUserForm)
 from .models import Profile
+from .celery_tasks import send_mail_async
 
 
 class SignUpView(UserIsNotLoggedIn, View):
@@ -43,6 +44,43 @@ class SignUpView(UserIsNotLoggedIn, View):
 
             return redirect(settings.LOGIN_REDIRECT_URL)
         return render(request, "users_app/signup.html", {"form": form})
+
+
+class UpdateUserView(View):
+    def get(self, request):
+        user_form = UpdateUserForm(instance=request.user)
+        profile_form = UpdateProfileForm(instance=request.user.profile)
+        next_url = self.request.GET.get("next", "/")
+
+        context = {
+            "user_form": user_form,
+            "profile_form": profile_form,
+            "next": next_url,
+        }
+        return render(
+            request, "users_app/update_user.html", context=context)
+
+    @transaction.atomic
+    def post(self, request):
+        user_form = UpdateUserForm(request.POST, instance=request.user)
+        profile_form = UpdateProfileForm(request.POST,
+                                         instance=request.user.profile)
+        next_url = self.request.GET.get("next", "/")
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request,
+                             "Your data has been updated successfully!")
+            return redirect(next_url)
+
+        context = {
+          "user_form": user_form,
+          "profile_form": profile_form,
+          "next": next_url
+        }
+        return render(
+            request, "users_app/update_user.html", context=context)
 
 
 class AdminPanelView(UserIsAdminMixin, View):
@@ -86,12 +124,13 @@ class AdminPanelView(UserIsAdminMixin, View):
                 message = render_to_string(
                     "users_app/password_set/email.html", context=mail_context)
 
-                send_mail(
+                send_mail_async.delay(
                     subject=subject,
                     message=message,
                     from_email=None,
                     recipient_list=[user.email],
                 )
+
                 messages.success(
                     request,
                     "Publisher-user has been created "
@@ -129,43 +168,6 @@ class UserProfileView(LoginRequiredMixin, View):
             books = user.profile.publisher_company.books.all()
 
         return render(request, "users_app/profile.html", {"books": books})
-
-
-class UpdateUserView(View):
-    def get(self, request):
-        user_form = UpdateUserForm(instance=request.user)
-        profile_form = UpdateProfileForm(instance=request.user.profile)
-        next_url = self.request.GET.get("next", "/")
-
-        context = {
-            "user_form": user_form,
-            "profile_form": profile_form,
-            "next": next_url,
-        }
-        return render(
-            request, "users_app/update_user.html", context=context)
-
-    @transaction.atomic
-    def post(self, request):
-        user_form = UpdateUserForm(request.POST, instance=request.user)
-        profile_form = UpdateProfileForm(request.POST,
-                                         instance=request.user.profile)
-        next_url = self.request.GET.get("next", "/")
-
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            messages.success(request,
-                             "Your data has been updated successfully!")
-            return redirect(next_url)
-
-        context = {
-          "user_form": user_form,
-          "profile_form": profile_form,
-          "next": next_url
-        }
-        return render(
-            request, "users_app/update_user.html", context=context)
 
 
 class CustomLoginView(UserIsNotLoggedIn, LoginView):

@@ -1,53 +1,56 @@
 {% load static %}
 {% load mptt_tags %}
 
-{% block head %}
-<link rel="stylesheet" href="{% static 'comments_app/css/comments.css' %}">
-<script src="{% static 'comments_app/js/comments.js'%}"></script>
 
-</script>
+{% block head %}
+    <link rel="stylesheet" href="{% static 'comments_app/css/comments.css' %}">
+    <script src="{% static 'comments_app/js/comments.js' %}"></script>
 {% endblock %}
 
 <div class="row">
-  <div class="col-8 offset-2">
-    <div class="comments-block mt-4 p-4">
+    <div class="col-8 offset-2">
 
-      <form method="post">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" name="" value="Send">
-      </form>
+        <div class="comments-block mt-4 p-4">
 
-      <h2 class="text-center">Comments ({{ comments.count }})</h2>
-      {% if comments %}
-      {% recursetree comments %}
-      <div class="media my-4 p-2 border border-dark rounded">
-        <div class="media-body">
-          <h5 class="mt-2">{{ node.user.username }} <small><i>Posted on {{ node.created_at }}</i></small></h5>
-          <p>{{ node.text }}</p>
-          <div class="dropdown show">
-            <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">reply</a>
-            <div class="dropdown-menu px-2" aria-labelledby="dropdownMenuLink">
-              <form method="post">
+            <form method="post">
                 {% csrf_token %}
-                {{ form }}
-                {% if node.id %}
-                <input type="hidden" name="parent" value="{{ node.id}}">
-                {% endif %}
+                {{ form.text }}
                 <input type="submit" name="" value="Send">
-              </form>
-            </div>
-          </div>
-          <!-- Nested media object -->
-          {% if not node.is_leaf_node %}
-          <div class="ml-4">
-            {{ children }}
-          </div>
-          {% endif %}
+            </form>
+
+            <h2 class="text-center">Comments ({{ comments.count }})</h2>
+            {% if comments %}
+                {% recursetree comments %}
+                    <div class="media my-4 p-2 border border-dark rounded text-break">
+                        <div class="media-body">
+                            <h5 class="mt-2">{{ node.user.username }} <small><i>Posted
+                                on {{ node.created_at }}</i></small></h5>
+                            <p>{{ node.text }}</p>
+                            <div class="dropdown show">
+                                <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                                   aria-haspopup="true" aria-expanded="false">reply</a>
+                                <div class="dropdown-menu px-2" aria-labelledby="dropdownMenuLink">
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        {{ form.text }}
+                                        {% if node.id %}
+                                            <input type="hidden" name="parent" value="{{ node.id }}">
+                                        {% endif %}
+                                        <input type="submit" name="" value="Send">
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- Nested media object -->
+                            {% if not node.is_leaf_node %}
+                                <div class="ml-4">
+                                    {{ children }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endrecursetree %}
+            {% endif %}
         </div>
-      </div>
-      {% endrecursetree %}
-      {% endif %}
+
     </div>
-  </div>
 </div>

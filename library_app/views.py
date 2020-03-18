@@ -7,13 +7,15 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DetailView, ListView
 from django.views.generic.edit import FormMixin
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
 
 from comments_app.forms import CommentForm
 from comments_app.models import Comment
 from users_app.custom_mixins import UserIsPublisherAndHaveCompanyMixin
 
 from .model_filters import BookFilter
-from .models import Author, Book
+from .models import Author, Book, BookAuthorsPriority
 from .utils import join_params_for_pagination
 
 
@@ -31,7 +33,7 @@ class BookListView(ListView):
             queryset = queryset.annotate(
                 main=FilteredRelation(
                     'bookauthorspriority',
-                    condition=Q(bookauthorspriority__main=True))
+                    condition=Q(bookauthorspriority__priority=1))
             )
 
         self.filterset = self.filterset_class(
@@ -48,6 +50,7 @@ class BookListView(ListView):
         return context
 
 
+@method_decorator(csrf_protect, name='dispatch')
 class BookDetailView(FormMixin, DetailView):
     model = Book
     form_class = CommentForm
@@ -58,7 +61,7 @@ class BookDetailView(FormMixin, DetailView):
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             next_url_param = '?next=%s' % request.path
-            return HttpResponseRedirect(reverse('login')+next_url_param)
+            return HttpResponseRedirect(reverse('login') + next_url_param)
         self.object = self.get_object()
         form = self.get_form()
         if form.is_valid():
@@ -68,7 +71,7 @@ class BookDetailView(FormMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['comments'] = self.object.comments.all()
+        context['comments'] = self.object.comments.all().select_related('user')
         return context
 
     def form_valid(self, form):
@@ -101,6 +104,11 @@ class CreateBookView(UserIsPublisherAndHaveCompanyMixin, CreateView):
               'genres',)
     template_name = 'library_app/book/create.html'
 
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(**self.get_form_kwargs())
+
     def get_success_url(self):
         return self.request.GET.get('next', '/')
 
@@ -115,9 +123,13 @@ class CreateBookView(UserIsPublisherAndHaveCompanyMixin, CreateView):
         # Create the book with the company the user-publisher belongs to
         self.object.publisher_company = publisher_company
         self.object.save()
+
+        # create author priority in the through model
+        for author in form.cleaned_data.get('authors'):
+            BookAuthorsPriority.objects.create(book=self.object, author=author)
+
         messages.success(self.request, f'Book "{self.object.title}" '
                                        f'has been created.')
-
         return super().form_valid(form)
 
 
