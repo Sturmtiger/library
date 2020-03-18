@@ -22,13 +22,7 @@ It is possible to send out new books to users once a week (on Fridays).
 
 
 # How to run (locally)
-1 variant: Open your terminal in this project and  just enter `docker-compose up`
-
-2 variant(manually):
-- pipenv install
-- python3 manage.py migrate
-- python3 manage.py loaddata library_data.json
-- python3 manage.py runserver
+Open your terminal in this project and  just enter `docker-compose up`
 
 # How to run (deploy on Heroku)
 1. Sign up on Heroku
