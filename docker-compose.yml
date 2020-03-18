@@ -21,6 +21,14 @@ services:
       - 1025:1025 # smtp server
       - 8025:8025 # web ui
 
+  memcached:
+    image: memcached
+    ports:
+      - 11211:11211
+    entrypoint:
+      - memcached
+      - -m 64
+
   library_project:
     build:
       context: .
@@ -31,6 +39,7 @@ services:
       - 8080:8080
     depends_on:
       - db
+      - memcached
       - redis
       - mailhog
     env_file:

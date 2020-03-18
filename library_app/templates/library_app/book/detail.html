@@ -1,10 +1,14 @@
 {% extends 'base_layout.html' %}
 
+
 {% block title %}
 "{{ book.title }}" detail - {{ block.super }}
 {% endblock %}
 
 {% block content %}
+
+{% load cache %}
+{% cache 3600 book_detail book.slug %}
 <div class="container">
 
     <div class="row">
@@ -81,9 +85,8 @@
 
         </div>
     </div>
-
     {% include "comments_app/includes/comments.html" %}
 
 </div>
-
+{% endcache %}
 {% endblock %}

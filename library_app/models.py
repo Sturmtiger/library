@@ -19,11 +19,11 @@ class PublisherCompany(models.Model):
     name = models.CharField(max_length=50, unique=True)
     country = models.CharField(max_length=50)
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name_plural = "Publisher companies"
+
+    def __str__(self):
+        return self.name
 
 
 class Book(models.Model):
@@ -40,14 +40,14 @@ class Book(models.Model):
                                      through="BookAuthorsPriority")
     genres = models.ManyToManyField("Genre", related_name="books")
     ratings = GenericRelation(Rating, related_query_name='books')
-    comments = GenericRelation(Comment, related_query_name='books')
+    comments = GenericRelation(Comment, related_query_name='book')
 
     def get_absolute_url(self):
         return reverse('library_app:book_detail', args=[self.slug])
 
     def save(self, *args, **kwargs):
-        print('BOOK SAVE')
-        self.slug = gen_slug(self.title)
+        if not self.slug:
+            self.slug = gen_slug(self.title)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -84,7 +84,6 @@ class BookAuthorsPriority(models.Model):
     priority = models.PositiveSmallIntegerField(default=1)
 
     def save(self, *args, **kwargs):
-        print('PRIORITY SAVE')
         prev_same_book = BookAuthorsPriority.objects.filter(
             book=self.book).last()
         if prev_same_book:

@@ -7,7 +7,6 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DetailView, ListView
 from django.views.generic.edit import FormMixin
-from django.views.decorators.cache import cache_page
 
 from comments_app.forms import CommentForm
 from comments_app.models import Comment
@@ -49,7 +48,6 @@ class BookListView(ListView):
         return context
 
 
-@cache_page()
 class BookDetailView(FormMixin, DetailView):
     model = Book
     form_class = CommentForm
@@ -117,13 +115,13 @@ class CreateBookView(UserIsPublisherAndHaveCompanyMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        print(form.cleaned_data['authors'])
         self.object = form.save(commit=False)
         publisher_company = self.request.user.profile.publisher_company
         # Create the book with the company the user-publisher belongs to
         self.object.publisher_company = publisher_company
         self.object.save()
 
+        # create author priority in the through model
         for author in form.cleaned_data.get('authors'):
             BookAuthorsPriority.objects.create(book=self.object, author=author)
 
