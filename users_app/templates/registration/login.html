@@ -1,0 +1,28 @@
+{% extends "base_layout.html" %}
+{% load socialaccount %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Log in - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-6 offset-3">
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy}}
+                <input type="submit" value="Login">
+                <a href="{% url 'password_reset' %}">Forgot password?</a>
+            </form>
+            <legend>Don't have an account yet? <a href="{% url 'signup'%}">Sign up</a></legend>
+            <div class="social-auth">
+                <span>You can also use social auth:</span>
+                <a href="{% provider_login_url 'google' %}"><i class="fab fa-google"></i></a>
+                <a href="{% provider_login_url 'linkedin_oauth2' %}"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -21,10 +21,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', default='foo')
+SECRET_KEY = os.environ.get('SECRET_KEY',
+                default='gu9xk2cph!ympu$v3kt=upzo0621&j^4$np5$c9fujv)e80n-c')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.environ.get('DEBUG', default=0))
+DEBUG = int(os.environ.get('DEBUG', default=1))
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.herokuapp.com']
 
@@ -42,10 +43,23 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'library_app.apps.LibraryAppConfig',
+    'django.contrib.sites',
+
+    'mptt',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.linkedin_oauth2',
     'debug_toolbar',
     'star_ratings',
     'django_filters',
+    'crispy_forms',
+
+    'library_app.apps.LibraryAppConfig',
+    'users_app.apps.UsersAppConfig',
+    'comments_app.apps.CommentsAppConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -65,7 +79,7 @@ ROOT_URLCONF = "Library.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -127,12 +141,35 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Django star ratings
 STAR_RATINGS_RANGE = 10
-STAR_RATINGS_ANONYMOUS = True
 STAR_RATINGS_STAR_WIDTH = 20
+STAR_RATINGS_ANONYMOUS = False
+STAR_RATINGS_RERATE = False
 
 # Whitenoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# URLs
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+# Crispy forms
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+SITE_ID = 1
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False

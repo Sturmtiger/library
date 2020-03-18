@@ -1,12 +1,23 @@
-# from django.shortcuts import render
-from django.views.generic import DetailView, ListView
+from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.db.models import FilteredRelation, Q
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse, reverse_lazy
+from django.views import View
+from django.views.generic import CreateView, DetailView, ListView
+from django.views.generic.edit import FormMixin
+
+from comments_app.forms import CommentForm
+from comments_app.models import Comment
+from users_app.custom_mixins import UserIsPublisherAndHaveCompanyMixin
+
 from .model_filters import BookFilter
 from .models import Author, Book
 from .utils import join_params_for_pagination
 
 
-class BookList(ListView):
+class BookListView(ListView):
     filterset_class = BookFilter
     queryset = Book.objects.all().prefetch_related("authors", "genres")
     paginate_by = 9
@@ -37,13 +48,85 @@ class BookList(ListView):
         return context
 
 
-class BookDetail(DetailView):
+class BookDetailView(FormMixin, DetailView):
     model = Book
+    form_class = CommentForm
+
     context_object_name = "book"
     template_name = "library_app/book/detail.html"
 
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            next_url_param = '?next=%s' % request.path
+            return HttpResponseRedirect(reverse('login')+next_url_param)
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
-class AuthorDetail(DetailView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = self.object.comments.all()
+        return context
+
+    def form_valid(self, form):
+        parent = None
+        parent_id = self.request.POST.get('parent')
+        if parent_id:
+            parent = get_object_or_404(Comment, id=parent_id)
+
+        comment = form.save(commit=False)
+        comment.content_object = self.object
+        comment.user = self.request.user
+        comment.parent = parent
+        comment.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('library_app:book_detail',
+                            kwargs={'slug': self.object.slug})
+
+
+class AuthorDetailView(DetailView):
     model = Author
     context_object_name = "author"
     template_name = "library_app/author/detail.html"
+
+
+class CreateBookView(UserIsPublisherAndHaveCompanyMixin, CreateView):
+    model = Book
+    fields = ('title', 'cover', 'year_made', 'page_count', 'authors',
+              'genres',)
+    template_name = 'library_app/book/create.html'
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['next'] = self.request.GET.get('next', '/')
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        publisher_company = self.request.user.profile.publisher_company
+        # Create the book with the company the user-publisher belongs to
+        self.object.publisher_company = publisher_company
+        self.object.save()
+        messages.success(self.request, f'Book "{self.object.title}" '
+                                       f'has been created.')
+
+        return super().form_valid(form)
+
+
+class DeleteBookView(UserIsPublisherAndHaveCompanyMixin, View):
+    def get(self, request, slug):
+        book = get_object_or_404(Book, slug=slug)
+        if request.user.profile.publisher_company == book.publisher_company:
+            book.delete()
+            messages.success(request, 'Book has been deleted successfully')
+            next_url = request.GET.get('next', '/')
+            return redirect(next_url)
+        raise PermissionDenied

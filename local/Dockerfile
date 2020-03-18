@@ -9,6 +9,8 @@ RUN mkdir /library_project
 
 WORKDIR /library_project
 
-COPY . .
-
+COPY Pipfile Pipfile
+COPY Pipfile.lock Pipfile.lock
 RUN pipenv install --system
+
+COPY . .

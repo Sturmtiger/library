@@ -1,5 +1,10 @@
-from django.urls import reverse
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.urls import reverse
+from star_ratings.models import Rating
+
+from comments_app.models import Comment
+
 from .utils import gen_slug
 
 
@@ -34,6 +39,8 @@ class Book(models.Model):
                                      related_name="books",
                                      through="BookAuthorsPriority")
     genres = models.ManyToManyField("Genre", related_name="books")
+    ratings = GenericRelation(Rating, related_query_name='books')
+    comments = GenericRelation(Comment, related_query_name='books')
 
     def get_absolute_url(self):
         return reverse('library_app:book_detail', args=[self.slug])
