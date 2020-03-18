@@ -7,6 +7,8 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DetailView, ListView
 from django.views.generic.edit import FormMixin
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
 
 from comments_app.forms import CommentForm
 from comments_app.models import Comment
@@ -48,6 +50,7 @@ class BookListView(ListView):
         return context
 
 
+@method_decorator(csrf_protect, name='dispatch')
 class BookDetailView(FormMixin, DetailView):
     model = Book
     form_class = CommentForm
@@ -58,7 +61,7 @@ class BookDetailView(FormMixin, DetailView):
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             next_url_param = '?next=%s' % request.path
-            return HttpResponseRedirect(reverse('login')+next_url_param)
+            return HttpResponseRedirect(reverse('login') + next_url_param)
         self.object = self.get_object()
         form = self.get_form()
         if form.is_valid():
@@ -68,7 +71,7 @@ class BookDetailView(FormMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['comments'] = self.object.comments.all()
+        context['comments'] = self.object.comments.all().select_related('user')
         return context
 
     def form_valid(self, form):
