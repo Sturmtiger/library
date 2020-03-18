@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.urls import reverse_lazy
 
@@ -51,9 +52,14 @@ def password_reset_from_key_done(request):
     raise Http404
 
 
-class CustomPasswordSetView(PasswordSetView):
-    success_url = reverse_lazy('profile')
-
-
 def account_inactive(request):
     raise Http404
+
+
+class CustomPasswordSetView(LoginRequiredMixin, PasswordSetView):
+    success_url = reverse_lazy('profile')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['next'] = self.request.GET.get('next', '/')
+        return context

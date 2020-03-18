@@ -13,6 +13,7 @@ Password change - {{ block.super }}
                 {% csrf_token %}
                 {{ form|crispy }}
                 <input type="submit" value="Change my password">
+                <a href="{{ next }}">Cancel</a>
             </form>
         </div>
     </div>

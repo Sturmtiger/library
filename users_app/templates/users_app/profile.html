@@ -33,11 +33,11 @@
                             </li>
                         {% else %}
                             <li class="list-group-item">
-                                <a href="{% url 'account_set_password' %}">Set password</a>
+                                <a href="{% url 'account_set_password' %}?next={{ request.path }}">Set password</a>
                             </li>
                         {% endif %}
                         <li class="list-group-item">
-                            <a href="{% url 'socialaccount_connections' %}">Social connections</a>
+                            <a href="{% url 'socialaccount_connections' %}?next={{ request.path }}">Social connections</a>
                         </li>
                         {% if user.profile.get_type_display == 'publisher' and user.profile.publisher_company %}
                             <li class="list-group-item">

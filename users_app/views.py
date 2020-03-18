@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import (LoginView, PasswordResetConfirmView,
-                                       PasswordResetView)
+                                       PasswordResetView, PasswordChangeView)
 from django.contrib.sites.shortcuts import get_current_site
 from django.db import transaction
 from django.http import Http404
@@ -186,3 +186,10 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         if self.request.user.is_authenticated:
             logout(self.request)
         return super().dispatch(*args, **kwargs)
+
+
+class CustomPasswordChangeView(PasswordChangeView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['next'] = self.request.GET.get('next', '/')
+        return context
