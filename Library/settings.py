@@ -61,11 +61,12 @@ INSTALLED_APPS = [
     'star_ratings',
     'django_filters',
     'crispy_forms',
+    'rest_framework',
+    'rest_framework.authtoken',
 
     'library_app.apps.LibraryAppConfig',
     'users_app.apps.UsersAppConfig',
     'comments_app.apps.CommentsAppConfig',
-
 ]
 
 MIDDLEWARE = [
@@ -212,9 +213,9 @@ ACCOUNT_USERNAME_REQUIRED = False
 
 # celery
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL',
-                                   'redis://redis:6379/0')
+                                   'redis://127.0.0.1:6379/0')
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND',
-                                       'redis://redis:6379/1')
+                                       'redis://127.0.0.1:6379/1')
 CELERY_TIMEZONE = 'Europe/Kiev'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
@@ -229,4 +230,18 @@ CELERY_BEAT_SCHEDULE = {
         # every Friday at 12:00
         'schedule': crontab(minute=0, hour=12, day_of_week='5'),
     }
+}
+
+# DRF
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        # 'rest_framework.permissions.DjangoModelPermissions'
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 9,
 }

@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import FilteredRelation, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -7,8 +8,6 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DetailView, ListView
 from django.views.generic.edit import FormMixin
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_protect
 
 from comments_app.forms import CommentForm
 from comments_app.models import Comment
@@ -50,7 +49,6 @@ class BookListView(ListView):
         return context
 
 
-@method_decorator(csrf_protect, name='dispatch')
 class BookDetailView(FormMixin, DetailView):
     model = Book
     form_class = CommentForm
@@ -117,6 +115,7 @@ class CreateBookView(UserIsPublisherAndHaveCompanyMixin, CreateView):
         context['next'] = self.request.GET.get('next', '/')
         return context
 
+    @transaction.atomic
     def form_valid(self, form):
         self.object = form.save(commit=False)
         publisher_company = self.request.user.profile.publisher_company
