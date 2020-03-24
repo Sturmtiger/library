@@ -12,17 +12,19 @@ from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from django.views.generic import DetailView, FormView, TemplateView, UpdateView
+from django.views.generic import (DetailView, FormView, TemplateView,
+                                  UpdateView, CreateView)
 
 from .celery_tasks import send_mail_async
-from .custom_mixins import AnonymousUserRequired, UserIsAdmin
+from .custom_mixins import (AnonymousUserRequired, UserIsAdmin,
+                            CurrentUserObjectMixin)
 from .forms import (AssignPublisherCompanyToUserPublisherForm,
                     CreatePublisherUserForm, SignUpForm, UpdateProfileForm,
                     UpdateUserForm)
 from .models import Profile
 
 
-class SignUpView(AnonymousUserRequired, FormView):
+class SignUpView(AnonymousUserRequired, CreateView):
     template_name = "users/signup.html"
     form_class = SignUpForm
     success_url = settings.LOGIN_REDIRECT_URL
@@ -41,11 +43,10 @@ class SignUpView(AnonymousUserRequired, FormView):
         user = authenticate(username=self.object.username, password=password)
         login(self.request, user)
 
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
 
-class UserUpdateView(UpdateView):
-    object = None
+class UserUpdateView(CurrentUserObjectMixin, UpdateView):
     form_class = UpdateUserForm
     second_form_class = UpdateProfileForm
     template_name = "users/update_user.html"
@@ -60,11 +61,6 @@ class UserUpdateView(UpdateView):
             context["profile_form"] = self.second_form_class(instance=user.profile)
         context["next"] = self.request.GET.get("next", "/")
         return context
-
-    def get_object(self, queryset=None):
-        if not self.object:
-            self.object = self.request.user
-        return self.object
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
@@ -115,7 +111,7 @@ class AssignPublisherCompanyToUserPublisherView(UserIsAdmin, FormView):
         return next_url
 
 
-class CreatePublisherUserView(UserIsAdmin, FormView):
+class CreatePublisherUserView(UserIsAdmin, CreateView):
     template_name = "users/create_user_publisher.html"
     form_class = CreatePublisherUserForm
 
@@ -151,10 +147,10 @@ class CreatePublisherUserView(UserIsAdmin, FormView):
 
         messages.success(
             self.request,
-            "User-publisher has been created " "and message has been sent.",
+            "User-publisher has been created and message has been sent.",
         )
 
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -166,24 +162,19 @@ class CreatePublisherUserView(UserIsAdmin, FormView):
         return next_url
 
 
-class UserProfileView(LoginRequiredMixin, DetailView):
-    object = None
+class UserProfileView(LoginRequiredMixin, CurrentUserObjectMixin, DetailView):
     template_name = "users/profile.html"
 
     def get_context_data(self, **kwargs):
         user = self.get_object()
         books = None
-        if user.profile.type == Profile.PUBLISHER and user.profile.publisher_company:
+        if (user.profile.type == Profile.PUBLISHER
+                and user.profile.publisher_company):
             books = user.profile.publisher_company.books.all()
 
         context = super().get_context_data(**kwargs)
         context["books"] = books
         return context
-
-    def get_object(self, queryset=None):
-        if not self.object:
-            self.object = self.request.user
-        return self.object
 
 
 class CustomPasswordResetView(AnonymousUserRequired, PasswordResetView):

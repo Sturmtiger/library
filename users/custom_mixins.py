@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
 
 from .models import Profile
 
@@ -30,6 +31,19 @@ class UserIsPublisherAndHaveCompany(LoginRequiredMixin):
         return self.handle_no_permission()
 
 
+class PublisherCanDeleteBook(UserIsPublisherAndHaveCompany):
+    """
+    Checks if user's publisher-company corresponds to
+    the publisher-company of the book.
+    """
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        book = self.get_object()
+        if user.profile.publisher_company == book.publisher_company:
+            return super().post(request, *args, **kwargs)
+        raise PermissionDenied
+
+
 class AnonymousUserRequired(UserPassesTestMixin):
     """
     Checks if user is not logged in.
@@ -38,3 +52,8 @@ class AnonymousUserRequired(UserPassesTestMixin):
     def test_func(self):
         user = self.request.user
         return user.is_anonymous
+
+
+class CurrentUserObjectMixin:
+    def get_object(self, queryset=None):
+        return self.request.user

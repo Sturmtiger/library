@@ -1,17 +1,18 @@
 from django.contrib import messages
-from django.core.exceptions import PermissionDenied
 from django.db.models import FilteredRelation, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
-from django.views.generic import CreateView, DeleteView, DetailView, ListView
+from django.views.generic import (CreateView, DeleteView,
+                                  DetailView, ListView)
 from django.views.generic.edit import FormMixin
 
 from comments.forms import CommentForm
 from comments.models import Comment
-from users.custom_mixins import UserIsPublisherAndHaveCompany
+from users.custom_mixins import (UserIsPublisherAndHaveCompany,
+                                 PublisherCanDeleteBook)
 
 from .filters import BookFilter
 from .models import Author, Book, BookAuthorsPriority
@@ -127,15 +128,12 @@ class CreateBookView(UserIsPublisherAndHaveCompany, CreateView):
         return super().form_valid(form)
 
 
-class BookDeleteView(UserIsPublisherAndHaveCompany, DeleteView):
+class BookDeleteView(PublisherCanDeleteBook, DeleteView):
     model = Book
 
     def delete(self, request, *args, **kwargs):
-        book = self.get_object()
-        if request.user.profile.publisher_company == book.publisher_company:
-            messages.success(request, "Book has been deleted successfully")
-            return super().delete(request, *args, **kwargs)
-        raise PermissionDenied
+        messages.success(request, "Book has been deleted successfully")
+        return super().delete(request, *args, **kwargs)
 
     def get_success_url(self):
         next_url = self.request.GET.get("next", "/")
