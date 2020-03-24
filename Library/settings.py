@@ -62,9 +62,9 @@ INSTALLED_APPS = [
     'django_filters',
     'crispy_forms',
 
-    'library_app.apps.LibraryAppConfig',
-    'users_app.apps.UsersAppConfig',
-    'comments_app.apps.CommentsAppConfig',
+    'library.apps.LibraryConfig',
+    'users.apps.UsersConfig',
+    'comments.apps.CommentsConfig',
 
 ]
 
@@ -202,7 +202,7 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-SITE_ID = 3
+SITE_ID = 5
 
 # django-allauth
 ACCOUNT_EMAIL_REQUIRED = True
@@ -220,12 +220,12 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TASK_ROUTES = {
-    'users_app.celery_tasks.send_mail_async': {'queue': 'send_mail'},
-    'users_app.celery_tasks.newsletter': {'queue': 'newsletter'},
+    'users.celery_tasks.send_mail_async': {'queue': 'send_mail'},
+    'users.celery_tasks.newsletter': {'queue': 'newsletter'},
 }
 CELERY_BEAT_SCHEDULE = {
     'newsletter': {
-        'task': 'users_app.celery_tasks.newsletter',
+        'task': 'users.celery_tasks.newsletter',
         # every Friday at 12:00
         'schedule': crontab(minute=0, hour=12, day_of_week='5'),
     }

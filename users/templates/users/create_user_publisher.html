@@ -1,0 +1,22 @@
+{% extends "base_layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Create publisher - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-6 offset-3">
+            <h2 class="text-center">Create user publisher</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input type="submit" value="Create">
+                <a href="{{ next }}">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
