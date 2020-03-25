@@ -20,13 +20,13 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("library_app.urls")),
-    path("accounts/", include("users_app.urls")),
-    re_path(r'^accounts/', include('allauth.urls')),
-    re_path(r"^ratings/", include("library_app.custom_star_ratings.urls",
+    path("", include("library.urls")),
+    path("accounts/", include("users.urls")),
+    re_path(r"^accounts/", include("allauth.urls")),
+    re_path(r"^ratings/", include("library.custom_star_ratings.urls",
                                   namespace="ratings")),
     # DRF
-    path('api/', include('library_app.api.urls')),
+    path('api/', include('library.api.urls')),
     re_path(r'^api-auth/', include('rest_framework.urls')),
     re_path(r'^api-auth-token/', obtain_auth_token),
 ]

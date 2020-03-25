@@ -1,0 +1,22 @@
+{% extends "base_layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Assign publisher - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-6 offset-3">
+            <h2 class="text-center">Assign publisher company to user-publisher</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input type="submit" value="Assign">
+                <a href="{{ next }}">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
