@@ -202,7 +202,7 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-SITE_ID = 5
+SITE_ID = 3
 
 # django-allauth
 ACCOUNT_EMAIL_REQUIRED = True
