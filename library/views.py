@@ -3,8 +3,6 @@ from django.db.models import FilteredRelation, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_protect
 from django.views.generic import (CreateView, DeleteView,
                                   DetailView, ListView)
 from django.views.generic.edit import FormMixin
@@ -46,7 +44,6 @@ class BookListView(ListView):
         return context
 
 
-@method_decorator(csrf_protect, name="dispatch")
 class BookDetailView(FormMixin, DetailView):
     model = Book
     form_class = CommentForm
