@@ -16,7 +16,6 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path, re_path
-from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -27,9 +26,7 @@ urlpatterns = [
                                   namespace="ratings")),
     # DRF
     path('api/', include('library.api.urls')),
-    path('api/', include('users.api.urls')),
-    re_path(r'^api-auth/', include('rest_framework.urls')),
-    re_path(r'^api-auth-token/', obtain_auth_token),
+    path('api/accounts/', include('users.api.urls')),
 ]
 
 if settings.DEBUG:
