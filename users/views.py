@@ -36,6 +36,7 @@ class SignUpView(AnonymousUserRequired, CreateView):
         self.object.refresh_from_db()
         self.object.profile.patronymic = form.cleaned_data.get("patronymic")
         self.object.profile.birthday = form.cleaned_data.get("birthday")
+        self.object.profile.get_newsletter = form.cleaned_data.get("get_newsletter")
         self.object.profile.type = Profile.READER
         self.object.save()
 

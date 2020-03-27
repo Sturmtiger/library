@@ -27,6 +27,7 @@ urlpatterns = [
                                   namespace="ratings")),
     # DRF
     path('api/', include('library.api.urls')),
+    path('api/', include('users.api.urls')),
     re_path(r'^api-auth/', include('rest_framework.urls')),
     re_path(r'^api-auth-token/', obtain_auth_token),
 ]

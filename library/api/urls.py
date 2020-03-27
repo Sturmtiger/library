@@ -5,12 +5,12 @@ from . import views
 
 
 urlpatterns = [
-    path('books/<pk>/comments/', views.CommentOfBookList.as_view(),
-         name='comment-of-book-list'),
+    path('books/<pk>/comments/',
+         views.CommentOfBookListView.as_view(),
+         name='comment_list_of_book'),
 ]
 
 router = DefaultRouter()
 router.register(r'books', views.BookViewSet)
-router.register(r'authors', views.AuthorViewSet)
 
 urlpatterns += router.urls
