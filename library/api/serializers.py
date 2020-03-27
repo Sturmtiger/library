@@ -11,11 +11,16 @@ class BookSerializer(serializers.HyperlinkedModelSerializer):
         source='ratings.first.average',
         max_digits=4,
         decimal_places=2)
+    authors = serializers.SerializerMethodField()
+
+    def get_authors(self, obj):
+        authors = obj.authors.values_list('pseudonym', flat=True)
+        return authors
 
     class Meta:
         model = Book
         fields = ('url', 'id', 'slug', 'title', 'year_made',
-                  'publisher_company', 'page_count', 'ratings_average')
+                  'publisher_company', 'authors', 'page_count', 'ratings_average')
 
 
 class CommentSerializer(serializers.ModelSerializer):
