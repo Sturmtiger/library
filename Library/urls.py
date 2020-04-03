@@ -19,11 +19,12 @@ from django.urls import include, path, re_path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("library_app.urls")),
-    path("accounts/", include("users_app.urls")),
-    re_path(r'^accounts/', include('allauth.urls')),
-    re_path(r"^ratings/", include("library_app.custom_star_ratings.urls",
-                                  namespace="ratings")),
+    path("", include("library.urls")),
+    path("accounts/", include("users.urls")),
+    re_path(r"^accounts/", include("allauth.urls")),
+    re_path(
+        r"^ratings/", include("library.custom_star_ratings.urls", namespace="ratings")
+    ),
 ]
 
 if settings.DEBUG:
