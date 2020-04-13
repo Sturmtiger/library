@@ -6,7 +6,7 @@ from ..models import Book
 class BookFilter(filters.FilterSet):
     title = filters.CharFilter(lookup_expr="iexact")
     publisher_company = filters.CharFilter(
-        field_name='publisher_company__name',
+        field_name="publisher_company__name",
         lookup_expr="icontains")
 
     o = filters.OrderingFilter(

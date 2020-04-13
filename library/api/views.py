@@ -3,10 +3,16 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
 
-from .serializers import BookSerializer, CommentSerializer
-from library.models import Book
+from .serializers import (BookSerializer, CommentGETSerializer,
+                          CommentPOSTSerializer, AuthorSerializer,)
+from library.models import Book, Author
 from comments.models import Comment
 from .filters import BookFilter
+
+
+class AuthorView(generics.RetrieveAPIView):
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
 
 
 class BookViewSet(viewsets.ReadOnlyModelViewSet):
@@ -16,8 +22,13 @@ class BookViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CommentOfBookListView(generics.ListCreateAPIView):
-    serializer_class = CommentSerializer
+    serializer_class = CommentGETSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CommentPOSTSerializer
+        return super().get_serializer_class()
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -38,11 +49,10 @@ class CommentOfBookListView(generics.ListCreateAPIView):
                         headers=headers)
 
     def perform_create(self, serializer):
-        user = self.request.user
         # The book the comment belongs to
         book = Book.objects.get(pk=self.kwargs.get('pk'))
 
-        serializer.save(user=user, content_object=book)
+        serializer.save(content_object=book)
 
     def get_queryset(self):
         book = self.kwargs['pk']

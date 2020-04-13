@@ -111,7 +111,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         }
 
     def update(self, instance, validated_data):
-        print(validated_data)
         profile_fields = [
             "birthday",
             "patronymic",
