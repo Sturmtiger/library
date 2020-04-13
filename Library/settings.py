@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import dj_database_url
 from celery.schedules import crontab
+import socket
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -33,8 +35,6 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.herokuapp.com']
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
-
-import socket
 
 # tricks to have debug toolbar when developing with docker
 ip = socket.gethostbyname(socket.gethostname())
@@ -61,11 +61,12 @@ INSTALLED_APPS = [
     'star_ratings',
     'django_filters',
     'crispy_forms',
+    'rest_framework',
+    'rest_framework.authtoken',
 
     'library.apps.LibraryConfig',
     'users.apps.UsersConfig',
     'comments.apps.CommentsConfig',
-
 ]
 
 MIDDLEWARE = [
@@ -212,9 +213,9 @@ ACCOUNT_USERNAME_REQUIRED = False
 
 # celery
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL',
-                                   'redis://redis:6379/0')
+                                   'redis://127.0.0.1:6379/0')
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND',
-                                       'redis://redis:6379/1')
+                                       'redis://127.0.0.1:6379/1')
 CELERY_TIMEZONE = 'Europe/Kiev'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
@@ -229,4 +230,15 @@ CELERY_BEAT_SCHEDULE = {
         # every Friday at 12:00
         'schedule': crontab(minute=0, hour=12, day_of_week='5'),
     }
+}
+
+# DRF
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 9,
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }

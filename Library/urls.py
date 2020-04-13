@@ -22,9 +22,11 @@ urlpatterns = [
     path("", include("library.urls")),
     path("accounts/", include("users.urls")),
     re_path(r"^accounts/", include("allauth.urls")),
-    re_path(
-        r"^ratings/", include("library.custom_star_ratings.urls", namespace="ratings")
-    ),
+    re_path(r"^ratings/", include("library.custom_star_ratings.urls",
+                                  namespace="ratings")),
+    # DRF
+    path('api/', include('library.api.urls')),
+    path('api/accounts/', include('users.api.urls')),
 ]
 
 if settings.DEBUG:

@@ -1,6 +1,7 @@
 from django.contrib import messages
+from django.db import transaction
 from django.db.models import FilteredRelation, Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView,
@@ -55,12 +56,12 @@ class BookDetailView(FormMixin, DetailView):
         if not request.user.is_authenticated:
             next_url_param = "?next=%s" % request.path
             return HttpResponseRedirect(reverse("login") + next_url_param)
+
         self.object = self.get_object()
         form = self.get_form()
         if form.is_valid():
             return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+        return self.form_invalid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -72,6 +73,9 @@ class BookDetailView(FormMixin, DetailView):
         parent_id = self.request.POST.get("parent")
         if parent_id:
             parent = get_object_or_404(Comment, id=parent_id)
+            # if the book does not have a parent comment with that id
+            if parent not in self.object.comments.all():
+                return HttpResponseBadRequest()
 
         comment = form.save(commit=False)
         comment.content_object = self.object
@@ -108,6 +112,7 @@ class CreateBookView(UserIsPublisherAndHaveCompany, CreateView):
         context["next"] = self.request.GET.get("next", "/")
         return context
 
+    @transaction.atomic
     def form_valid(self, form):
         self.object = form.save(commit=False)
         publisher_company = self.request.user.profile.publisher_company
