@@ -142,7 +142,7 @@ class CreatePublisherUserView(UserIsAdmin, CreateView):
         send_mail_async.delay(
             subject=subject,
             message=message,
-            from_email=None,
+            from_email=settings.EMAIL_HOST_USER,
             recipient_list=[self.object.email],
         )
 

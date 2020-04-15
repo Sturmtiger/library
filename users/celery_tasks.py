@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
@@ -43,6 +44,6 @@ def newsletter():
         send_mail_async.delay(
             subject=subject,
             message=message,
-            from_email=None,
+            from_email=settings.EMAIL_HOST_USER,
             recipient_list=user_emails,
         )

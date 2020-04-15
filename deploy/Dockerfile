@@ -17,4 +17,5 @@ COPY . .
 
 RUN python manage.py collectstatic --noinput
 
+CMD celery -A Library.celery_app worker -B -l INFO -Q send_mail,newsletter
 CMD gunicorn Library.wsgi:application --bind 0.0.0.0:$PORT

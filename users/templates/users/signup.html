@@ -9,19 +9,6 @@ Sign up - {{ block.super }}
 <div class="container">
     <div class="row mt-4">
         <div class="col-6 offset-3">
-            {% if form.errors %}
-            <p>Your username and password didn't match. Please try again.</p>
-            {% endif %}
-
-            {% if next %}
-            {% if user.is_authenticated %}
-            <p>Your account doesn't have access to this page. To proceed,
-                please login with an account that has access.</p>
-            {% else %}
-            <p>Please login to see this page.</p>
-            {% endif %}
-            {% endif %}
-
             <form method="post">
                 {% csrf_token %}
                 {{ form|crispy }}
