@@ -19,7 +19,5 @@ COPY . .
 
 RUN python manage.py collectstatic --noinput
 
-
 COPY deploy/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-CMD supervisord -c /etc/supervisor/supervisord.conf && gunicorn Library.wsgi:application --bind 0.0.0.0:$PORT
-#CMD celery -A Library.celery_app worker -B -l INFO -Q send_mail,newsletter && gunicorn Library.wsgi:application --bind 0.0.0.0:$PORT
+CMD supervisord -c /etc/supervisor/supervisord.conf
