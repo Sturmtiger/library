@@ -28,10 +28,11 @@ SECRET_KEY = os.environ.get('SECRET_KEY',
                             default='gu9xk2cph!ympu$v3kt=upzo0621&j^4$np5$c9fujv)e80n-c')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.environ.get('DEBUG', default=1))
+DEBUG = bool(os.environ.get('DEBUG', default=1))
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.herokuapp.com']
 
+# for debug-toolbar
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
@@ -39,6 +40,15 @@ INTERNAL_IPS = [
 # tricks to have debug toolbar when developing with docker
 ip = socket.gethostbyname(socket.gethostname())
 INTERNAL_IPS += [ip[:-1] + '1']
+
+
+def show_toolbar(request):
+    return DEBUG is True and request.user.is_staff
+
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': 'Library.settings.show_toolbar',
+}
 
 # Application definition
 
@@ -132,10 +142,26 @@ if DATABASE_URL:
 
 # Caches
 
+servers = os.environ.get('MEMCACHIER_SERVERS')
+username = os.environ.get('MEMCACHIER_USERNAME')
+password = os.environ.get('MEMCACHIER_PASSWORD')
+
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': os.environ.get('MEMCACHED_LOCATION', '0.0.0.0:11211'),
+        # Use django-bmemcached
+        'BACKEND': 'django_bmemcached.memcached.BMemcached',
+
+        # TIMEOUT is not the connection timeout! It's the default expiration
+        # timeout that should be applied to keys! Setting it to `None`
+        # disables expiration.
+        'TIMEOUT': None,
+
+        'LOCATION': servers,
+
+        'OPTIONS': {
+            'username': username,
+            'password': password,
+        }
     }
 }
 

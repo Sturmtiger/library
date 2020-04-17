@@ -23,6 +23,7 @@ celery = "*"
 redis = "*"
 python-memcached = "*"
 djangorestframework = "*"
+django-bmemcached = "*"
 
 [requires]
 python_version = "3.7"
