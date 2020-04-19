@@ -48,7 +48,7 @@ class UpdateProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["get_newsletter"].label = "I want to get newsletter"
-        self.fields["email"].help_text = "Format: YYYY-MM-DD"
+        self.fields["birthday"].help_text = "Format: YYYY-MM-DD"
 
     class Meta:
         fields = ("patronymic", "birthday", "get_newsletter")

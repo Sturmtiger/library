@@ -28,22 +28,23 @@ SECRET_KEY = os.environ.get('SECRET_KEY',
                             default='gu9xk2cph!ympu$v3kt=upzo0621&j^4$np5$c9fujv)e80n-c')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.environ.get('DEBUG', default=1))
+DEBUG = int(os.environ.get('DEBUG', default=1))
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.herokuapp.com']
+# ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.herokuapp.com']
+ALLOWED_HOSTS = ['*']
 
-# for debug-toolbar
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
-
-# tricks to have debug toolbar when developing with docker
-ip = socket.gethostbyname(socket.gethostname())
-INTERNAL_IPS += [ip[:-1] + '1']
+# # for debug-toolbar
+# INTERNAL_IPS = [
+#     '127.0.0.1',
+# ]
+#
+# # tricks to have debug toolbar when developing with docker
+# ip = socket.gethostbyname(socket.gethostname())
+# INTERNAL_IPS += [ip[:-1] + '1']
 
 
 def show_toolbar(request):
-    return DEBUG is True and request.user.is_staff
+    return request.user.is_staff
 
 
 DEBUG_TOOLBAR_CONFIG = {
